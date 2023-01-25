@@ -53,8 +53,10 @@ import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.background.longpoll.receivers.RestarterBroadcastReceiver
 import com.twoeightnine.root.xvii.background.longpoll.services.NotificationService
 import com.twoeightnine.root.xvii.chatowner.ChatOwnerFactory
+import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
 import com.twoeightnine.root.xvii.crypto.md5
 import com.twoeightnine.root.xvii.lg.L
+import com.twoeightnine.root.xvii.main.MainActivity
 import global.msnthrp.xvii.uikit.extensions.SimpleBitmapTarget
 import global.msnthrp.xvii.uikit.extensions.load
 import io.reactivex.Completable
@@ -67,7 +69,7 @@ import java.text.DecimalFormat
 import java.util.regex.Pattern
 
 
-private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\])"
+private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\]|#+[a-zA-Z0-9а-яА-Я(_)]{1,})"
 
 fun isOnline(): Boolean {
     val cm = App.context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -270,19 +272,36 @@ fun wrapMentions(context: Context, text: CharSequence, addClickable: Boolean = f
         val start = matcher.start()
         val end = matcher.end()
 
-        val divider = mention.indexOf('|')
-        val mentionUi = mention.substring(divider + 1, mention.length - 1)
-        val userId = mention.substring(3, divider).toIntOrNull()
+        if(mention.indexOf('#')==0){
+            // если тег
+            ssb.append(text.substring(globalStart, start))
+                .append(mention)
+            val tmp = ssb.toString()
+            if (addClickable) {
+                ssb.setSpan(object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        //showToast(context, mention)
+                        MainActivity.launch(context, mention)
+                        //ChatOwnerFactory.launch(context, userId)
+                    }
+                }, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
 
-        ssb.append(text.substring(globalStart, start))
+        }else{
+            val divider = mention.indexOf('|')
+            val mentionUi = mention.substring(divider + 1, mention.length - 1)
+            val userId = mention.substring(3, divider).toIntOrNull()
+
+            ssb.append(text.substring(globalStart, start))
                 .append(mentionUi)
-        val tmp = ssb.toString()
-        if (userId != null && addClickable) {
-            ssb.setSpan(object : ClickableSpan() {
-                override fun onClick(widget: View) {
-                    ChatOwnerFactory.launch(context, userId)
-                }
-            }, tmp.length - mentionUi.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            val tmp = ssb.toString()
+            if (userId != null && addClickable) {
+                ssb.setSpan(object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        ChatOwnerFactory.launch(context, userId)
+                    }
+                }, tmp.length - mentionUi.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
         }
         globalStart = end
     }

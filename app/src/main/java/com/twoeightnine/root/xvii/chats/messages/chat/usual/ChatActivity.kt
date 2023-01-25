@@ -39,6 +39,7 @@ class ChatActivity : ContentActivity() {
         val shareImages = args?.getStringArrayList(SHARE_IMAGE) ?: emptyList<String>()
         val dialog = args?.getParcelable(DIALOG) ?: Dialog(
                 peerId = args?.getInt(PEER_ID) ?: 0,
+                messageId = args?.getInt(MESSAGE_ID) ?: 0,
                 title = args?.getString(TITLE) ?: "",
                 photo = args?.getString(AVATAR)
         )
@@ -55,6 +56,7 @@ class ChatActivity : ContentActivity() {
         const val SHARE_TEXT = "shareText"
         const val SHARE_IMAGE = "shareImage"
         const val PEER_ID = "peerId"
+        const val MESSAGE_ID = "messageId"
         const val TITLE = "title"
         const val AVATAR = "avatar"
 

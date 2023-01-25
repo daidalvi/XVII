@@ -67,6 +67,8 @@ abstract class BaseMessagesFragment<VM : BaseMessagesViewModel> : BaseFragment()
 
     abstract fun getAdapterSettings(): MessagesAdapter.Settings
 
+    abstract fun getSearchMessageId(): Int
+
     protected open fun prepareViewModel() {}
 
     /**
@@ -112,13 +114,15 @@ abstract class BaseMessagesFragment<VM : BaseMessagesViewModel> : BaseFragment()
         }
         val interaction = data.data ?: return
 
+        val searchMsgId = getSearchMessageId()
+
         try {
             when (interaction.type) {
                 Interaction.Type.CLEAR -> {
                     adapter.clear()
                 }
                 Interaction.Type.ADD -> {
-                    val firstLoad = adapter.isEmpty
+                    val firstLoad = adapter.isEmpty || searchMsgId > 0
                     val isAtEnd = adapter.isAtBottom(rvChatList.layoutManager as? LinearLayoutManager)
                     adapter.addAll(interaction.messages.toMutableList(), interaction.position)
                     adapter.stopLoading(interaction.messages.isEmpty())
@@ -127,10 +131,17 @@ abstract class BaseMessagesFragment<VM : BaseMessagesViewModel> : BaseFragment()
                             var unreadPos = adapter.itemCount - 1 // default last item
                             for (index in interaction.messages.indices) {
                                 val message = interaction.messages[index].message
-                                if (!message.read && !message.isOut()) {
+                                if (searchMsgId == 0 && !message.read && !message.isOut() ||
+                                    searchMsgId == message.id) {
                                     unreadPos = index
                                     break
                                 }
+                            }
+                            if(searchMsgId > 0 && interaction.messages[unreadPos].message.id != searchMsgId){
+                                unreadPos = 0
+                                adapter.startLoading(true)
+                                loadMore(adapter.itemCount)
+                                //adapter.startLoading(false)
                             }
                             rvChatList.scrollToPosition(unreadPos)
                         }

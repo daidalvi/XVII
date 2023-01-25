@@ -27,6 +27,9 @@ import com.twoeightnine.root.xvii.BuildConfig
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.base.BaseFragment
 import com.twoeightnine.root.xvii.chatowner.ChatOwnerFactory
+import com.twoeightnine.root.xvii.chatowner.fragments.BaseChatOwnerFragment
+import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
+import com.twoeightnine.root.xvii.main.MainActivity
 import com.twoeightnine.root.xvii.model.Wrapper
 import com.twoeightnine.root.xvii.uikit.Munch
 import com.twoeightnine.root.xvii.uikit.paint
@@ -47,6 +50,14 @@ class SearchFragment : BaseFragment() {
     lateinit var viewModelFactory: SearchViewModel.Factory
     private lateinit var viewModel: SearchViewModel
 
+
+    private val selectedItemId by lazy {
+        arguments?.getInt(MainActivity.SELECTED_ITEM_ID) ?: 0
+    }
+    private val searchString by lazy {
+        arguments?.getString(MainActivity.SEARCH_TEXT)
+    }
+
     private val adapter by lazy {
         SearchAdapter(requireContext(), ::onClick, ::onLongClick)
     }
@@ -60,6 +71,10 @@ class SearchFragment : BaseFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)[SearchViewModel::class.java]
 
         etSearch.subscribeSearch(true, viewModel::search)
+        searchString?.let {
+            etSearch.setText(it.toString())
+        }
+
         ivDelete.setOnClickListener { etSearch.setText("") }
         ivEmptyView.paint(Munch.color.color50)
 
@@ -77,7 +92,7 @@ class SearchFragment : BaseFragment() {
         viewModel.getResult().observe(viewLifecycleOwner, ::updateResults)
     }
 
-    private fun updateResults(data: Wrapper<ArrayList<Dialog>>) {
+    private fun updateResults(data: Wrapper<ArrayList<SearchDialog>>) {
         if (data.data != null) {
             adapter.update(data.data)
         } else {
@@ -85,12 +100,31 @@ class SearchFragment : BaseFragment() {
         }
     }
 
-    private fun onClick(dialog: Dialog) {
-        ChatOwnerFactory.launch(context, dialog.peerId)
+    private fun onClick(sDialog: SearchDialog) {
+        var dialog = Dialog(
+                peerId = sDialog.peerId,
+                messageId = sDialog.messageId,
+                title = sDialog.title,
+                text = sDialog.text,
+                photo = sDialog.photo,
+                isOnline = sDialog.isOnline,
+                isOut = sDialog.isOut
+            )
+        //ChatOwnerFactory.launch(context, dialog.peerId)
+        ChatActivity.launch(context, dialog)
     }
 
-    private fun onLongClick(dialog: Dialog) {
+    private fun onLongClick(sDialog: SearchDialog) {
         if (BuildConfig.DEBUG) {
+            var dialog = Dialog(
+                peerId = sDialog.peerId,
+                messageId = sDialog.messageId,
+                title = sDialog.title,
+                text = sDialog.text,
+                photo = sDialog.photo,
+                isOnline = sDialog.isOnline,
+                isOut = sDialog.isOut
+            )
             NotificationUtils.showTestMessageNotification(requireContext(), dialog)
         }
     }

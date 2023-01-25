@@ -20,6 +20,7 @@ package com.twoeightnine.root.xvii.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.managers.Prefs
 import com.twoeightnine.root.xvii.model.User
 import com.twoeightnine.root.xvii.model.WrappedLiveData
@@ -29,6 +30,7 @@ import com.twoeightnine.root.xvii.network.ApiService
 import com.twoeightnine.root.xvii.network.response.BaseResponse
 import com.twoeightnine.root.xvii.network.response.ListResponse
 import com.twoeightnine.root.xvii.network.response.SearchConversationsResponse
+import com.twoeightnine.root.xvii.network.response.SearchResponse
 import com.twoeightnine.root.xvii.utils.subscribeSmart
 import global.msnthrp.xvii.data.dialogs.Dialog
 import io.reactivex.Flowable
@@ -37,9 +39,9 @@ import javax.inject.Inject
 
 class SearchViewModel(private val api: ApiService) : ViewModel() {
 
-    private val resultLiveData = WrappedMutableLiveData<ArrayList<Dialog>>()
+    private val resultLiveData = WrappedMutableLiveData<ArrayList<SearchDialog>>()
 
-    fun getResult() = resultLiveData as WrappedLiveData<ArrayList<Dialog>>
+    fun getResult() = resultLiveData as WrappedLiveData<ArrayList<SearchDialog>>
 
     fun search(q: String) {
         if (q.isEmpty()) {
@@ -54,22 +56,44 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                 resultLiveData.value = Wrapper(arrayListOf())
             }
         } else {
-            Flowable.zip(
+            api.search(q, COUNT).subscribeSmart({ response ->
+                val dialogs = arrayListOf<SearchDialog>()
+                val mResp = response
+                mResp?.items?.forEach { msg ->
+                    var dlg = SearchDialog(
+                        peerId = msg.peerId ?: 0,
+                        messageId = msg.id ?: 0,
+                        text = msg.text ?: "",
+                        title = mResp.getTitleFor(msg) ?: "",
+                        photo = mResp.getPhotoFor(msg) ?: "",
+                        isOnline = mResp.isOnline(msg),
+                        isOut =  msg.isOut()
+                    )
+                    dialogs.add(dlg)
+                }
+
+                resultLiveData.value = Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
+            }, { error ->
+                resultLiveData.value = Wrapper(error = error)
+            })
+            /*Flowable.zip(
                     api.searchFriends(q, User.FIELDS, COUNT, 0),
-                    api.searchUsers(q, User.FIELDS, COUNT, 0),
+                    //api.searchUsers(q, User.FIELDS, COUNT, 0),
+                    api.search(q, COUNT),
                     api.searchConversations(q, COUNT),
                     ResponseCombinerFunction()
             )
                     .subscribeSmart({ response ->
-                        resultLiveData.value = Wrapper(ArrayList(response.distinctBy { it.peerId }))
+                        resultLiveData.value = Wrapper(ArrayList(response.distinctBy { it.messageId }))
                     }, { error ->
                         resultLiveData.value = Wrapper(error = error)
-                    })
+                    })*/
         }
     }
 
-    private fun createFromUser(user: User) = Dialog(
+    private fun createFromUser(user: User) = SearchDialog(
             peerId = user.id,
+            messageId = user.id,
             title = user.fullName,
             photo = user.photo100,
             isOnline = user.isOnline
@@ -77,33 +101,49 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
 
     companion object {
 
-        const val COUNT = 50
+        const val COUNT = 100
     }
 
     private inner class ResponseCombinerFunction :
             Function3<BaseResponse<ListResponse<User>>,
-                    BaseResponse<ListResponse<User>>,
+                    //BaseResponse<ListResponse<User>>,
+                    BaseResponse<SearchResponse>,
                     BaseResponse<SearchConversationsResponse>,
-                    BaseResponse<ArrayList<Dialog>>> {
+                    BaseResponse<ArrayList<SearchDialog>>> {
 
         override fun apply(
                 friends: BaseResponse<ListResponse<User>>,
-                users: BaseResponse<ListResponse<User>>,
+                //users: BaseResponse<ListResponse<User>>,
+                messages: BaseResponse<SearchResponse>,
                 conversations: BaseResponse<SearchConversationsResponse>
-        ): BaseResponse<ArrayList<Dialog>> {
-            val dialogs = arrayListOf<Dialog>()
+        ): BaseResponse<ArrayList<SearchDialog>> {
+            val dialogs = arrayListOf<SearchDialog>()
 
             val cResp = conversations.response
-            friends.response?.items?.forEach { dialogs.add(createFromUser(it)) }
+            //friends.response?.items?.forEach { dialogs.add(createFromUser(it)) }
             cResp?.items?.forEach { conversation ->
-                dialogs.add(Dialog(
+                dialogs.add(SearchDialog(
                         peerId = conversation.peer?.id ?: 0,
+                        messageId = conversation.peer?.id ?: 0,
                         title = cResp.getTitleFor(conversation) ?: "",
                         photo = cResp.getPhotoFor(conversation) ?: "",
                         isOnline = cResp.isOnline(conversation)
                 ))
             }
-            users.response?.items?.forEach { dialogs.add(createFromUser(it)) }
+            //users.response?.items?.forEach { dialogs.add(createFromUser(it)) }
+            val mResp = messages.response
+            mResp?.items?.forEach { msg ->
+                var dlg = SearchDialog(
+                    peerId = msg.peerId ?: 0,
+                    messageId = msg.id ?: 0,
+                    text = msg.text ?: "",
+                    title = mResp.getTitleFor(msg) ?: "",
+                    photo = mResp.getPhotoFor(msg) ?: "",
+                    isOnline = mResp.isOnline(msg),
+                    isOut =  msg.isOut()
+                )
+                dialogs.add(dlg)
+            }
 
             return BaseResponse(dialogs)
         }
