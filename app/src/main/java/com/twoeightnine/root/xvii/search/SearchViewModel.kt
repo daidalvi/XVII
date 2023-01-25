@@ -39,9 +39,15 @@ import javax.inject.Inject
 
 class SearchViewModel(private val api: ApiService) : ViewModel() {
 
+    var fromFriendsPage = false
+
     private val resultLiveData = WrappedMutableLiveData<ArrayList<SearchDialog>>()
 
     fun getResult() = resultLiveData as WrappedLiveData<ArrayList<SearchDialog>>
+
+    fun setFrom(fromFriends:Boolean){
+        fromFriendsPage = fromFriends
+    }
 
     fun search(q: String) {
         if (q.isEmpty()) {
@@ -56,38 +62,41 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                 resultLiveData.value = Wrapper(arrayListOf())
             }
         } else {
-            api.search(q, COUNT).subscribeSmart({ response ->
-                val dialogs = arrayListOf<SearchDialog>()
-                val mResp = response
-                mResp?.items?.forEach { msg ->
-                    var dlg = SearchDialog(
-                        peerId = msg.peerId ?: 0,
-                        messageId = msg.id ?: 0,
-                        text = msg.text ?: "",
-                        title = mResp.getTitleFor(msg) ?: "",
-                        photo = mResp.getPhotoFor(msg) ?: "",
-                        isOnline = mResp.isOnline(msg),
-                        isOut =  msg.isOut()
-                    )
-                    dialogs.add(dlg)
-                }
+            if (!fromFriendsPage) {
+                api.search(q, COUNT).subscribeSmart({ response ->
+                    val dialogs = arrayListOf<SearchDialog>()
+                    val mResp = response
+                    mResp?.items?.forEach { msg ->
+                        var dlg = SearchDialog(
+                            peerId = msg.peerId ?: 0,
+                            messageId = msg.id ?: 0,
+                            text = msg.text ?: "",
+                            title = mResp.getTitleFor(msg) ?: "",
+                            photo = mResp.getPhotoFor(msg) ?: "",
+                            isOnline = mResp.isOnline(msg),
+                            isOut = msg.isOut()
+                        )
+                        dialogs.add(dlg)
+                    }
 
-                resultLiveData.value = Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
-            }, { error ->
-                resultLiveData.value = Wrapper(error = error)
-            })
-            /*Flowable.zip(
+                    resultLiveData.value = Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
+                }, { error ->
+                    resultLiveData.value = Wrapper(error = error)
+                })
+            }else{
+                Flowable.zip(
                     api.searchFriends(q, User.FIELDS, COUNT, 0),
-                    //api.searchUsers(q, User.FIELDS, COUNT, 0),
-                    api.search(q, COUNT),
+                    api.searchUsers(q, User.FIELDS, COUNT, 0),
                     api.searchConversations(q, COUNT),
                     ResponseCombinerFunction()
-            )
+                )
                     .subscribeSmart({ response ->
                         resultLiveData.value = Wrapper(ArrayList(response.distinctBy { it.messageId }))
                     }, { error ->
                         resultLiveData.value = Wrapper(error = error)
-                    })*/
+                    })
+
+            }
         }
     }
 
@@ -106,21 +115,19 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
 
     private inner class ResponseCombinerFunction :
             Function3<BaseResponse<ListResponse<User>>,
-                    //BaseResponse<ListResponse<User>>,
-                    BaseResponse<SearchResponse>,
+                    BaseResponse<ListResponse<User>>,
                     BaseResponse<SearchConversationsResponse>,
                     BaseResponse<ArrayList<SearchDialog>>> {
 
         override fun apply(
                 friends: BaseResponse<ListResponse<User>>,
-                //users: BaseResponse<ListResponse<User>>,
-                messages: BaseResponse<SearchResponse>,
+                users: BaseResponse<ListResponse<User>>,
                 conversations: BaseResponse<SearchConversationsResponse>
         ): BaseResponse<ArrayList<SearchDialog>> {
             val dialogs = arrayListOf<SearchDialog>()
 
             val cResp = conversations.response
-            //friends.response?.items?.forEach { dialogs.add(createFromUser(it)) }
+            friends.response?.items?.forEach { dialogs.add(createFromUser(it)) }
             cResp?.items?.forEach { conversation ->
                 dialogs.add(SearchDialog(
                         peerId = conversation.peer?.id ?: 0,
@@ -130,21 +137,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                         isOnline = cResp.isOnline(conversation)
                 ))
             }
-            //users.response?.items?.forEach { dialogs.add(createFromUser(it)) }
-            val mResp = messages.response
-            mResp?.items?.forEach { msg ->
-                var dlg = SearchDialog(
-                    peerId = msg.peerId ?: 0,
-                    messageId = msg.id ?: 0,
-                    text = msg.text ?: "",
-                    title = mResp.getTitleFor(msg) ?: "",
-                    photo = mResp.getPhotoFor(msg) ?: "",
-                    isOnline = mResp.isOnline(msg),
-                    isOut =  msg.isOut()
-                )
-                dialogs.add(dlg)
-            }
-
+            users.response?.items?.forEach { dialogs.add(createFromUser(it)) }
             return BaseResponse(dialogs)
         }
     }

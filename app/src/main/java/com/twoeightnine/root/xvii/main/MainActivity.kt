@@ -78,7 +78,7 @@ class MainActivity : BaseActivity() {
 
         ivSearch.setOnClickListener {
             var arguments = Bundle().apply {
-                putInt(SELECTED_ITEM_ID, bottomNavView.selectedItemId)
+                putBoolean(SELECTED_FRIENDS, bottomNavView.selectedItemId==R.id.menu_friends)
             }
             startFragment<SearchFragment>(arguments)
         }
@@ -98,7 +98,7 @@ class MainActivity : BaseActivity() {
             it.getString(SEARCH_TEXT)?.let{
                 val search = it;
                 var arguments = Bundle().apply {
-                    putInt(SELECTED_ITEM_ID, bottomNavView.selectedItemId)
+                    putBoolean(SELECTED_FRIENDS, bottomNavView.selectedItemId==R.id.menu_friends)
                     putString(SEARCH_TEXT, search)
                 }
                 startFragment<SearchFragment>(arguments)
@@ -152,7 +152,7 @@ class MainActivity : BaseActivity() {
     companion object {
 
         const val SEARCH_TEXT = "searchText"
-        const val SELECTED_ITEM_ID = "selectedItemId"
+        const val SELECTED_FRIENDS = "selectedFriends"
 
         fun launch(context: Context?, search:String?= null) {
             if(search==null) {

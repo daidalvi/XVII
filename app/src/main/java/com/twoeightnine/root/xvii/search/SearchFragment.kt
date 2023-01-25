@@ -51,8 +51,8 @@ class SearchFragment : BaseFragment() {
     private lateinit var viewModel: SearchViewModel
 
 
-    private val selectedItemId by lazy {
-        arguments?.getInt(MainActivity.SELECTED_ITEM_ID) ?: 0
+    private val selectedFriends by lazy {
+        arguments?.getBoolean(MainActivity.SELECTED_FRIENDS)?: false
     }
     private val searchString by lazy {
         arguments?.getString(MainActivity.SEARCH_TEXT)
@@ -70,6 +70,7 @@ class SearchFragment : BaseFragment() {
         App.appComponent?.inject(this)
         viewModel = ViewModelProviders.of(this, viewModelFactory)[SearchViewModel::class.java]
 
+        viewModel.setFrom(selectedFriends)
         etSearch.subscribeSearch(true, viewModel::search)
         searchString?.let {
             etSearch.setText(it.toString())
