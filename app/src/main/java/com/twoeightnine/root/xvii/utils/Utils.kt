@@ -29,6 +29,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.BatteryManager
@@ -39,6 +40,7 @@ import android.provider.MediaStore
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -280,11 +282,11 @@ fun wrapMentions(context: Context, text: CharSequence, addClickable: Boolean = f
             if (addClickable) {
                 ssb.setSpan(object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        //showToast(context, mention)
                         MainActivity.launch(context, mention)
-                        //ChatOwnerFactory.launch(context, userId)
                     }
                 }, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }else{
+                ssb.setSpan(object : StyleSpan(Typeface.BOLD) {}, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
         }else{

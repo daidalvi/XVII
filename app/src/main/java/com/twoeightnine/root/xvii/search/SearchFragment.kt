@@ -27,7 +27,6 @@ import com.twoeightnine.root.xvii.BuildConfig
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.base.BaseFragment
 import com.twoeightnine.root.xvii.chatowner.ChatOwnerFactory
-import com.twoeightnine.root.xvii.chatowner.fragments.BaseChatOwnerFragment
 import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
 import com.twoeightnine.root.xvii.main.MainActivity
 import com.twoeightnine.root.xvii.model.Wrapper
@@ -112,7 +111,7 @@ class SearchFragment : BaseFragment() {
                 isOut = sDialog.isOut
             )
         if (sDialog.isChat){
-            ChatActivity.launch(context, dialog)
+            ChatActivity.launch(context, dialog, true)
         }else {
             ChatOwnerFactory.launch(context, dialog.peerId)
         }

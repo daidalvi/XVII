@@ -46,6 +46,7 @@ abstract class BaseMessagesFragment<VM : BaseMessagesViewModel> : BaseFragment()
     @Inject
     lateinit var viewModelFactory: BaseMessagesViewModel.Factory
     protected lateinit var viewModel: VM
+    var stopSearch:Boolean = false
 
     protected val adapter by lazy {
         MessagesAdapter(
@@ -87,6 +88,7 @@ abstract class BaseMessagesFragment<VM : BaseMessagesViewModel> : BaseFragment()
         viewModel = ViewModelProviders.of(this, viewModelFactory)[getViewModelClass()]
         prepareViewModel()
         adapter.startLoading()
+        stopSearch = false
 
         progressBar.show()
         xviiToolbar.isLifted = true
@@ -128,20 +130,19 @@ abstract class BaseMessagesFragment<VM : BaseMessagesViewModel> : BaseFragment()
                     adapter.stopLoading(interaction.messages.isEmpty())
                     when {
                         firstLoad -> {
-                            var unreadPos = adapter.itemCount - 1 // default last item
+                            var unreadPos = if(searchMsgId>0) 0 else adapter.itemCount - 1 // default last item
                             for (index in interaction.messages.indices) {
                                 val message = interaction.messages[index].message
                                 if (searchMsgId == 0 && !message.read && !message.isOut() ||
                                     searchMsgId == message.id) {
                                     unreadPos = index
+                                    stopSearch = true
                                     break
                                 }
                             }
-                            if(searchMsgId > 0 && interaction.messages[unreadPos].message.id != searchMsgId){
+                            if(searchMsgId > 0 && !stopSearch){
                                 unreadPos = 0
-                                adapter.startLoading(true)
                                 loadMore(adapter.itemCount)
-                                //adapter.startLoading(false)
                             }
                             rvChatList.scrollToPosition(unreadPos)
                         }

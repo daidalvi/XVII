@@ -43,7 +43,8 @@ class ChatActivity : ContentActivity() {
                 title = args?.getString(TITLE) ?: "",
                 photo = args?.getString(AVATAR)
         )
-        return ChatMessagesFragment.newInstance(dialog, forwarded, shareText, shareImages)
+        val search = args?.getBoolean(SEARCH)?: false
+        return ChatMessagesFragment.newInstance(dialog, forwarded, shareText, shareImages, search)
     }
 
     override fun getDraggableBottomMargin(): Int = 200
@@ -59,6 +60,7 @@ class ChatActivity : ContentActivity() {
         const val MESSAGE_ID = "messageId"
         const val TITLE = "title"
         const val AVATAR = "avatar"
+        const val SEARCH = "search"
 
         fun launch(context: Context?, chatOwner: ChatOwner) {
             launch(context, Dialog(
@@ -103,6 +105,15 @@ class ChatActivity : ContentActivity() {
                     title = user.fullName,
                     photo = user.photo100
             ))
+        }
+        fun launch(context: Context?, dialog: Dialog, search:Boolean = false) {
+            context ?: return
+
+            context.startActivity(Intent(context, ChatActivity::class.java).apply {
+                putExtra(DIALOG, dialog)
+                putExtra(SEARCH, search)
+                flags = flags or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            })
         }
     }
 }
