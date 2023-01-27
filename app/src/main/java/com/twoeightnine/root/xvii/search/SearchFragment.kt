@@ -111,8 +111,11 @@ class SearchFragment : BaseFragment() {
                 isOnline = sDialog.isOnline,
                 isOut = sDialog.isOut
             )
-        //ChatOwnerFactory.launch(context, dialog.peerId)
-        ChatActivity.launch(context, dialog)
+        if (sDialog.isChat){
+            ChatActivity.launch(context, dialog)
+        }else {
+            ChatOwnerFactory.launch(context, dialog.peerId)
+        }
     }
 
     private fun onLongClick(sDialog: SearchDialog) {

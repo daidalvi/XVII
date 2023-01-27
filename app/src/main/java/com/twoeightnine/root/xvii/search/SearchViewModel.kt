@@ -35,6 +35,7 @@ import com.twoeightnine.root.xvii.utils.subscribeSmart
 import global.msnthrp.xvii.data.dialogs.Dialog
 import io.reactivex.Flowable
 import io.reactivex.functions.Function3
+import java.lang.StrictMath.min
 import javax.inject.Inject
 
 class SearchViewModel(private val api: ApiService) : ViewModel() {
@@ -74,7 +75,8 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                             title = mResp.getTitleFor(msg) ?: "",
                             photo = mResp.getPhotoFor(msg) ?: "",
                             isOnline = mResp.isOnline(msg),
-                            isOut = msg.isOut()
+                            isOut = msg.isOut(),
+                            isChat = true
                         )
                         dialogs.add(dlg)
                     }
@@ -104,6 +106,8 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
             peerId = user.id,
             messageId = user.id,
             title = user.fullName,
+            // @Todo: добавить время последнего посещения?
+            text = user.status?: "",
             photo = user.photo100,
             isOnline = user.isOnline
     )
@@ -126,13 +130,16 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
         ): BaseResponse<ArrayList<SearchDialog>> {
             val dialogs = arrayListOf<SearchDialog>()
 
-            val cResp = conversations.response
+            // @TODO: может, убрать  conversation? В диалогах и так работает
+            // поиск по имени беседы, а на вкладке пользователей это не вполне надо
+             val cResp = conversations.response
             friends.response?.items?.forEach { dialogs.add(createFromUser(it)) }
             cResp?.items?.forEach { conversation ->
                 dialogs.add(SearchDialog(
                         peerId = conversation.peer?.id ?: 0,
                         messageId = conversation.peer?.id ?: 0,
                         title = cResp.getTitleFor(conversation) ?: "",
+                        text = cResp.getMemberCount(conversation) ?: "",
                         photo = cResp.getPhotoFor(conversation) ?: "",
                         isOnline = cResp.isOnline(conversation)
                 ))

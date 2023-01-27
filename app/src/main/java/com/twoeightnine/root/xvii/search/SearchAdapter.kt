@@ -65,6 +65,7 @@ class SearchAdapter(
         fun bind(dialog: SearchDialog) {
             with(itemView) {
                 civPhoto.load(dialog.photo)
+                //@TODO: в случае isChat=false сделать tvTitle большим, а tvBody мелким
                 tvTitle.text = dialog.title
                 tvTitle.lowerIf(Prefs.lowerTexts)
                 tvBody.text = if (EmojiHelper.hasEmojis(dialog.text)) {

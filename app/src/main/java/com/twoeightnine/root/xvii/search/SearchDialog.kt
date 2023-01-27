@@ -14,6 +14,8 @@ data class SearchDialog(
 
     var isOnline: Boolean,
 
-    var isOut: Boolean = true
+    var isOut: Boolean = true,
+
+    var isChat: Boolean = false
 
 )
