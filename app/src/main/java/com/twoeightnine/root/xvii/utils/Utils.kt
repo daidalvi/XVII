@@ -71,7 +71,7 @@ import java.text.DecimalFormat
 import java.util.regex.Pattern
 
 
-private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\]|#+[a-zA-Z0-9а-яА-Я(_)]{1,})"
+private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\]|#+[a-zA-Z0-9а-яА-ЯёЁ_]{1,})"
 
 fun isOnline(): Boolean {
     val cm = App.context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
