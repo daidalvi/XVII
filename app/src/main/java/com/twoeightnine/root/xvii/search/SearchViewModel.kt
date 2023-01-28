@@ -50,7 +50,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
         fromFriendsPage = fromFriends
     }
 
-    fun search(q: String) {
+    fun search(q: String, offset: Int =0) {
         if (q.isEmpty()) {
             if (Prefs.suggestPeople) {
                 api.searchUsers(q, User.FIELDS, COUNT, 0)
@@ -64,7 +64,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
             }
         } else {
             if (!fromFriendsPage) {
-                api.search(q, COUNT).subscribeSmart({ response ->
+                api.search(q, COUNT, offset).subscribeSmart({ response ->
                     val dialogs = arrayListOf<SearchDialog>()
                     val mResp = response
                     mResp?.items?.forEach { msg ->
@@ -80,20 +80,31 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                         )
                         dialogs.add(dlg)
                     }
-
-                    resultLiveData.value = Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
+                    if(offset > 0) {
+                        resultLiveData.value?.data?.addAll(ArrayList(dialogs.distinctBy { it.messageId }))
+                        resultLiveData.value = Wrapper(resultLiveData.value?.data)
+                    }else {
+                        resultLiveData.value =
+                            Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
+                    }
                 }, { error ->
                     resultLiveData.value = Wrapper(error = error)
                 })
             }else{
                 Flowable.zip(
-                    api.searchFriends(q, User.FIELDS, COUNT, 0),
-                    api.searchUsers(q, User.FIELDS, COUNT, 0),
+                    api.searchFriends(q, User.FIELDS, COUNT, offset),
+                    api.searchUsers(q, User.FIELDS, COUNT, offset),
                     api.searchConversations(q, COUNT),
                     ResponseCombinerFunction()
                 )
                     .subscribeSmart({ response ->
-                        resultLiveData.value = Wrapper(ArrayList(response.distinctBy { it.messageId }))
+                        if(offset > 0) {
+                            resultLiveData.value?.data?.addAll(ArrayList(response.distinctBy { it.peerId }))
+                            resultLiveData.value = Wrapper(resultLiveData.value?.data)
+                        }else {
+                            resultLiveData.value = Wrapper(ArrayList(response.distinctBy { it.peerId }))
+                        }
+
                     }, { error ->
                         resultLiveData.value = Wrapper(error = error)
                     })
@@ -112,7 +123,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
 
     companion object {
 
-        const val COUNT = 100
+        const val COUNT = 50
     }
 
     private inner class ResponseCombinerFunction :

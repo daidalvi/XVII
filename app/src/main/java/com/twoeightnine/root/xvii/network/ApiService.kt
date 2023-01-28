@@ -150,6 +150,7 @@ interface ApiService {
     fun search(
         @Query("q") q: String,
         @Query("count") count: Int,
+        @Query("offset") offset: Int,
         @Query("fields") fields: String = User.FIELDS
     ): Flowable<BaseResponse<SearchResponse>>
 

@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.BuildConfig
 import com.twoeightnine.root.xvii.R
@@ -48,7 +49,7 @@ class SearchFragment : BaseFragment() {
     @Inject
     lateinit var viewModelFactory: SearchViewModel.Factory
     private lateinit var viewModel: SearchViewModel
-
+    var lastAdded: Int = 0
 
     private val selectedFriends by lazy {
         arguments?.getBoolean(MainActivity.SELECTED_FRIENDS)?: false
@@ -139,6 +140,7 @@ class SearchFragment : BaseFragment() {
             activity?.let { hideKeyboard(it) }
             false
         }
+        rvSearch.addOnScrollListener(SearchScrollListener())
         adapter.emptyView = llEmptyView
     }
 
@@ -146,4 +148,17 @@ class SearchFragment : BaseFragment() {
 
         fun newInstance() = SearchFragment()
     }
+
+    private inner class SearchScrollListener : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            if (rvSearch!=null && lastAdded < adapter.itemCount - 1 &&
+                adapter.lastVisiblePosition(rvSearch.layoutManager) == adapter.itemCount - 1) {
+                viewModel.search(etSearch.text.toString(), adapter.itemCount)
+                lastAdded = adapter.itemCount - 1
+            }
+        }
+    }
+
 }
