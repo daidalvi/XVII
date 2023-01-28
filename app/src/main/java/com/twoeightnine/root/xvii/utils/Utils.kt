@@ -672,12 +672,4 @@ fun getUriForFile(context: Context?, file: File): Uri? {
     }
 }
 
-fun pluralRussian(number: Int, titles: Array<String>): String {
-    val cases = intArrayOf(2, 0, 1, 1, 1, 2)
-    return titles.get(if (number%100>4 && number%100<20) 2 else cases[StrictMath.min(
-        number % 10,
-        5
-    )])
-}
-
 fun isAndroid10OrHigher() = Build.VERSION.SDK_INT >= 29

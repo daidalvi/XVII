@@ -65,17 +65,21 @@ class SearchAdapter(
         fun bind(dialog: SearchDialog) {
             with(itemView) {
                 civPhoto.load(dialog.photo)
-                //@TODO: в случае isChat=false сделать tvTitle большим, а tvBody мелким
-                tvTitle.text = dialog.title
-                tvTitle.lowerIf(Prefs.lowerTexts)
-                tvBody.text = if (EmojiHelper.hasEmojis(dialog.text)) {
-                    EmojiHelper.getEmojied(
-                        context,
-                        dialog.text,
-                        Html.fromHtml(getMessageBody(context, dialog)) as SpannableStringBuilder
-                    )
-                } else {
-                    Html.fromHtml(getMessageBody(context, dialog))
+                if (dialog.isChat == true) {
+                    tvTitle.text = dialog.title
+                    tvTitle.lowerIf(Prefs.lowerTexts)
+                    tvBody.text = if (EmojiHelper.hasEmojis(dialog.text)) {
+                        EmojiHelper.getEmojied(
+                            context,
+                            dialog.text,
+                            Html.fromHtml(getMessageBody(context, dialog)) as SpannableStringBuilder
+                        )
+                    } else {
+                        Html.fromHtml(getMessageBody(context, dialog))
+                    }
+                }else{
+                    tvTitleSingle.text = dialog.title
+                    tvTitleSingle.lowerIf(Prefs.lowerTexts)
                 }
                 ivOnlineDot.hide() // due to this list is not autorefreshable
 

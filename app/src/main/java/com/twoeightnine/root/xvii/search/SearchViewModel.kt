@@ -106,8 +106,6 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
             peerId = user.id,
             messageId = user.id,
             title = user.fullName,
-            // @Todo: добавить время последнего посещения?
-            text = user.status?: "",
             photo = user.photo100,
             isOnline = user.isOnline
     )
@@ -139,7 +137,6 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                         peerId = conversation.peer?.id ?: 0,
                         messageId = conversation.peer?.id ?: 0,
                         title = cResp.getTitleFor(conversation) ?: "",
-                        text = cResp.getMemberCount(conversation) ?: "",
                         photo = cResp.getPhotoFor(conversation) ?: "",
                         isOnline = cResp.isOnline(conversation)
                 ))

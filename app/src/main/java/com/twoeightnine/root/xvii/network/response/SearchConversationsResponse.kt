@@ -26,7 +26,6 @@ import com.twoeightnine.root.xvii.model.User
 import com.twoeightnine.root.xvii.utils.matchesChatId
 import com.twoeightnine.root.xvii.utils.matchesGroupId
 import com.twoeightnine.root.xvii.utils.matchesUserId
-import com.twoeightnine.root.xvii.utils.pluralRussian
 
 data class SearchConversationsResponse(
 
@@ -69,14 +68,6 @@ data class SearchConversationsResponse(
         return when {
             peerId.matchesUserId() -> getUser(peerId)?.isOnline == true
             else -> false
-        }
-    }
-
-    fun getMemberCount(conversation: Conversation): String? {
-        return conversation.chatSettings?.membersCount?.let{
-            // @TODO: вынести русскоязычные константы и подумать, как правильно
-            // формировать множественное число в случае других языков
-            it.toString()+" участник"+pluralRussian(it, arrayOf("", "а", "ов"))
         }
     }
 }
