@@ -27,6 +27,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ import com.twoeightnine.root.xvii.chats.messages.base.MessagesAdapter
 import com.twoeightnine.root.xvii.chats.messages.base.MessagesReplyItemCallback
 import com.twoeightnine.root.xvii.chats.messages.chat.MentionedMembersAdapter
 import com.twoeightnine.root.xvii.chats.messages.chat.StickersSuggestionAdapter
+import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
 import com.twoeightnine.root.xvii.chats.tools.ChatInputController
 import com.twoeightnine.root.xvii.chats.tools.ChatToolbarController
 import com.twoeightnine.root.xvii.dialogs.fragments.DialogsForwardFragment
@@ -55,17 +57,21 @@ import com.twoeightnine.root.xvii.model.attachments.Sticker
 import com.twoeightnine.root.xvii.model.attachments.Video
 import com.twoeightnine.root.xvii.model.messages.Message
 import com.twoeightnine.root.xvii.photoviewer.ImageViewerActivity
+import com.twoeightnine.root.xvii.search.SearchAdapter
 import com.twoeightnine.root.xvii.uikit.Munch
 import com.twoeightnine.root.xvii.uikit.paint
 import com.twoeightnine.root.xvii.utils.*
 import com.twoeightnine.root.xvii.utils.contextpopup.ContextPopupItem
 import com.twoeightnine.root.xvii.utils.contextpopup.createContextPopup
 import com.twoeightnine.root.xvii.views.TextInputAlertDialog
+import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.uikit.extensions.*
 import global.msnthrp.xvii.uikit.utils.ExtensionUtils
 import kotlinx.android.synthetic.main.chat_input_panel.*
 import kotlinx.android.synthetic.main.fragment_chat.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.view_chat_multiselect.*
+import kotlinx.coroutines.*
 
 abstract class BaseChatMessagesFragment<VM : BaseChatMessagesViewModel> : BaseMessagesFragment<VM>() {
 
@@ -98,6 +104,22 @@ abstract class BaseChatMessagesFragment<VM : BaseChatMessagesViewModel> : BaseMe
     private val handler = Handler()
     private var inputController: ChatInputController? = null
 
+    private val starredAdapter by lazy {
+        StarredAdapter(requireContext(), ::onStarredClick, ::onStarredLongClick)
+    }
+    private fun initStarredRecycler() {
+        rvStarred.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
+        rvStarred.adapter = starredAdapter
+    }
+
+    private fun onStarredLongClick(dialog: Dialog) {
+        showToast(context, dialog.title)
+    }
+
+    private fun onStarredClick(dialog: Dialog) {
+        ChatActivity.launch(context, dialog)
+    }
+
     abstract fun onEncryptedDocClicked(doc: Doc)
 
     override fun prepareViewModel() {
@@ -122,6 +144,7 @@ abstract class BaseChatMessagesFragment<VM : BaseChatMessagesViewModel> : BaseMe
         stylize()
         initContent()
         initMultiSelectMenu()
+        initStarredRecycler()
 
         rvStickersSuggestion.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         rvStickersSuggestion.adapter = stickersAdapter
@@ -149,6 +172,7 @@ abstract class BaseChatMessagesFragment<VM : BaseChatMessagesViewModel> : BaseMe
         viewModel.getCanWrite().observe(viewLifecycleOwner, ::onCanWriteChanged)
         viewModel.getActivity().observe(viewLifecycleOwner, ::onActivityChanged)
         viewModel.mentionedMembers.observe(viewLifecycleOwner, ::showMentionedMembers)
+        viewModel.getStarred().observe(viewLifecycleOwner, ::showStarred)
 
         ViewCompat.setOnApplyWindowInsetsListener(rlInputBack) { view, insets ->
             view.setPadding(0, 0, 0, insets.systemWindowInsetBottom)
@@ -174,6 +198,16 @@ abstract class BaseChatMessagesFragment<VM : BaseChatMessagesViewModel> : BaseMe
                 bottomMargin = margin + insets.systemWindowInsetBottom
             }
             insets
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.loadStarred()
+        }
+    }
+
+    fun showStarred(data: List<Dialog>){
+        if (data != null) {
+            starredAdapter.update(data)
         }
     }
 

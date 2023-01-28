@@ -30,10 +30,7 @@ import com.twoeightnine.root.xvii.chats.messages.Interaction
 import com.twoeightnine.root.xvii.chats.messages.base.BaseMessagesViewModel
 import com.twoeightnine.root.xvii.lg.L
 import com.twoeightnine.root.xvii.managers.Prefs
-import com.twoeightnine.root.xvii.model.CanWrite
-import com.twoeightnine.root.xvii.model.LastSeen
-import com.twoeightnine.root.xvii.model.User
-import com.twoeightnine.root.xvii.model.Wrapper
+import com.twoeightnine.root.xvii.model.*
 import com.twoeightnine.root.xvii.model.attachments.Attachment
 import com.twoeightnine.root.xvii.model.attachments.Sticker
 import com.twoeightnine.root.xvii.model.attachments.Video
@@ -44,10 +41,16 @@ import com.twoeightnine.root.xvii.network.ApiService
 import com.twoeightnine.root.xvii.network.response.BaseResponse
 import com.twoeightnine.root.xvii.network.response.MessagesHistoryResponse
 import com.twoeightnine.root.xvii.scheduled.core.SendMessageWorker
+import com.twoeightnine.root.xvii.search.SearchDialog
 import com.twoeightnine.root.xvii.storage.SessionProvider
 import com.twoeightnine.root.xvii.utils.*
 import global.msnthrp.xvii.data.db.AppDb
+import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.data.scheduled.ScheduledMessage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -82,11 +85,16 @@ abstract class BaseChatMessagesViewModel(api: ApiService) : BaseMessagesViewMode
 
     private val mentionedMembersLiveData = MutableLiveData<List<User>>()
 
+    private val starredLiveData = MutableLiveData<List<Dialog>>()
+
+    fun getStarred() = starredLiveData as LiveData<ArrayList<Dialog>>
+
     @Inject
     lateinit var appDb: AppDb
 
     val mentionedMembers: LiveData<List<User>>
         get() = mentionedMembersLiveData
+
 
     var peerId: Int = 0
         set(value) {
@@ -171,6 +179,26 @@ abstract class BaseChatMessagesViewModel(api: ApiService) : BaseMessagesViewMode
         }
         mentionedMembersLiveData.value = mentioned
     }
+
+    fun loadStarred(){
+        fromDbStarred{ starredDialogs ->
+            GlobalScope.launch {
+                withContext(Dispatchers.Main){ starredLiveData.value = starredDialogs }
+            }
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private fun fromDbStarred(onLoaded: (List<Dialog>) -> Unit) {
+        appDb.dialogsDao().getStarredDialogs()
+            .subscribe(onLoaded) {
+                it.printStackTrace()
+                lw("error loading starred: ${it.message}")
+                onLoaded(arrayListOf())
+            }
+    }
+
+
 
     fun setActivity(type: String = ACTIVITY_TYPING) {
         if (Prefs.showTyping) {

@@ -47,12 +47,18 @@
 
         <include layout="@layout/view_chat_multiselect" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvStarred"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/xviiToolbar" />
+
         <com.twoeightnine.root.xvii.views.XviiSwipeRefreshLayout
             android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/rvAttached"
-            android:layout_below="@+id/xviiToolbar"
+            android:layout_below="@+id/rvStarred"
             app:srl_direction="bottom">
 
             <androidx.recyclerview.widget.RecyclerView

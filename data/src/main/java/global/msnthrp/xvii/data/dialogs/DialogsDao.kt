@@ -37,6 +37,12 @@ interface DialogsDao {
     @Query("SELECT peerId FROM dialogs WHERE isPinned = 1")
     fun getPinned(): Single<List<Int>>
 
+    @Query("SELECT peerId FROM dialogs WHERE isStarred = 1")
+    fun getStarred(): Single<List<Int>>
+
+    @Query("SELECT * FROM dialogs WHERE isStarred = 1 ORDER BY isPinned DESC, timeStamp DESC")
+    fun getStarredDialogs(): Single<List<Dialog>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertDialog(dialog: Dialog): Completable
 

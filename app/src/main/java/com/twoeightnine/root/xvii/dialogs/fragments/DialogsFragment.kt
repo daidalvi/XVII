@@ -134,7 +134,11 @@ open class DialogsFragment : BaseFragment() {
                             showToast(context, "shortcut added")
                         }
                     }
-                }
+                },
+                ContextPopupItem(
+                    if (dialog.isStarred) R.drawable.ic_star_crossed else R.drawable.ic_star,
+                    if (dialog.isStarred) R.string.remove_shortcut_from_chat
+                    else R.string.add_shortcut_to_chat) { viewModel.starDialog(dialog) }
         )
 
         if (dialog.peerId.matchesUserId()) {

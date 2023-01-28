@@ -29,11 +29,9 @@ import com.twoeightnine.root.xvii.extensions.load
 import com.twoeightnine.root.xvii.managers.Prefs
 import com.twoeightnine.root.xvii.utils.EmojiHelper
 import com.twoeightnine.root.xvii.utils.wrapMentions
-import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.uikit.base.adapters.BaseAdapter
 import global.msnthrp.xvii.uikit.extensions.hide
 import global.msnthrp.xvii.uikit.extensions.lowerIf
-import kotlinx.android.synthetic.main.item_dialog.view.*
 import kotlinx.android.synthetic.main.item_dialog_search.view.*
 import kotlinx.android.synthetic.main.item_dialog_search.view.civPhoto
 import kotlinx.android.synthetic.main.item_dialog_search.view.ivOnlineDot

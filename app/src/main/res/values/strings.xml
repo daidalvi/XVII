@@ -48,6 +48,8 @@
     <string name="megabytes">%s mb</string>
     <string name="link">link</string>
     <string name="add_shortcut">add shortcut</string>
+    <string name="add_shortcut_to_chat">add shortcut to chat window</string>
+    <string name="remove_shortcut_from_chat">remove shortcut from chat window</string>
     <string name="wall_post">wall post</string>
     <string name="poll_public">public poll</string>
     <string name="poll_anon">anonymous poll</string>

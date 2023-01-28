@@ -144,7 +144,14 @@ class DialogsViewModel(
         notifyDialogsChanged()
         saveDialogAsync(dialog)
     }
+    fun starDialog(d: Dialog) {
+        val dialog = dialogsLiveData.value?.data
+            ?.find { it.peerId == d.peerId } ?: return
 
+        dialog.isStarred = !dialog.isStarred
+        notifyDialogsChanged()
+        saveDialogAsync(dialog)
+    }
     fun addAlias(d: Dialog, alias: String) {
         val dialog = dialogsLiveData.value?.data
                 ?.find { it.peerId == d.peerId } ?: return
@@ -160,6 +167,7 @@ class DialogsViewModel(
         val muteList = Prefs.muteList
         getStoredDialogs { storedDialogs ->
             val pinnedIds = storedDialogs.filter { it.isPinned }.map { it.peerId }
+            val starredIds = storedDialogs.filter { it.isStarred }.map { it.peerId }
 
             response?.items?.forEach { dm ->
                 dm.lastMessage?.also { message ->
@@ -176,6 +184,7 @@ class DialogsViewModel(
                             response.isOnline(dm),
                             message.peerId in muteList,
                             message.peerId in pinnedIds,
+                            message.peerId in starredIds,
                             storedDialogs.find { it.peerId == message.peerId }?.alias
                     ))
                 }
