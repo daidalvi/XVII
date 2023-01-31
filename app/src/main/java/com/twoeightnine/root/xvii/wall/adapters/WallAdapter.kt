@@ -21,6 +21,7 @@ package com.twoeightnine.root.xvii.wall.adapters
 import android.content.Context
 import android.text.Html
 import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -90,12 +91,10 @@ class WallAdapter(
 
     inner class WallViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(post: WallPost) {
+        fun bind(post: WallPost, level:Int=0) {
             with(itemView) {
                 val topPadding = 0 //if (isFirst) firstItemPadding else 0
                 setPadding(0, topPadding, 0, 0)
-
-                //Log.d("ZEZEZE", "post name: "+tvName.text)
 
                 post.group?.let{
                     if(it.id>0) {
@@ -131,6 +130,7 @@ class WallAdapter(
                         } else {
                             Html.fromHtml(getMessageBody(context, it))
                         }
+                        tvText.movementMethod = LinkMovementMethod.getInstance()
                     }
                 }
 
@@ -152,6 +152,11 @@ class WallAdapter(
                     }
                 }
 
+                if (post.copyHistory != null && post.copyHistory.size > 0) {
+                    fillContent(llContainer)
+                    WallViewHolder(llContainer).bind(post.copyHistory[0], level + 1)
+                }
+
                 setOnClickListener {
                     items.getOrNull(adapterPosition)?.also(onClick)
                 }
@@ -160,6 +165,11 @@ class WallAdapter(
                     true
                 }
             }
+        }
+
+
+        private fun fillContent(root: ViewGroup) {
+            root.addView(View.inflate(context, R.layout.item_wall, null))
         }
 
         private fun createViewForWallPost(wallPost: WallPost){

@@ -41,8 +41,7 @@ class WallViewModel(private val api: ApiService) : ViewModel() {
                         wallLiveData.value?.data ?: arrayListOf()
                     }
                     response.items?.forEach { wallPost ->
-                        wallPost.group = getGroup(-wallPost.fromId, response)
-                        wallPost.user = getUser(wallPost.fromId, response)
+                        getData(wallPost, response)
                     }
 
                     existing.addAll(response.items)
@@ -50,6 +49,14 @@ class WallViewModel(private val api: ApiService) : ViewModel() {
                 }, { error ->
                     wallLiveData.value = Wrapper(error = error)
                 })
+    }
+
+    private fun getData(wallPost:WallPost, response:WallPostResponse){
+        wallPost.group = getGroup(-wallPost.fromId, response)
+        wallPost.user = getUser(wallPost.fromId, response)
+        if (wallPost.copyHistory != null && wallPost.copyHistory.size > 0) {
+            getData(wallPost.copyHistory[0], response)
+        }
     }
     private fun getGroup(fromId: Int, response: WallPostResponse): Group {
         for (group in response.groups) {
