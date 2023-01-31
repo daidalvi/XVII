@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ xvii - messenger for vk
+  ~ Copyright (C) 2021  TwoEightNine
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="SpUsage">
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        app:cardBackgroundColor="@color/popup"
+        app:cardCornerRadius="@dimen/profile_card_radius"
+        app:cardElevation="12dp">
+
+    <RelativeLayout
+        android:id="@+id/rlItemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_rect">
+
+        <com.twoeightnine.root.xvii.uikit.XviiAvatar
+            android:id="@+id/civPhoto"
+            android:layout_width="@dimen/dialogs_photo_size"
+            android:layout_height="@dimen/dialogs_photo_size"
+            android:layout_margin="@dimen/item_margin"
+            app:avatarNameSize="@dimen/avatar_name_size_dialog"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toEndOf="@+id/civPhoto"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvName"
+                style="@style/MainMediumText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="@dimen/user_name_text_size"
+                tools:text="text meduim" />
+
+            <TextView
+                android:id="@+id/tvInfo"
+                style="@style/OtherText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/user_margin_between"
+                android:maxLines="1"
+                android:textSize="@dimen/user_info_text_size"
+                tools:text="text smaall" />
+
+        </LinearLayout>
+
+        <GridLayout
+            android:columnCount="3"
+            android:horizontalSpacing="0dp"
+            android:verticalSpacing="0dp"
+            android:layout_marginEnd="3dp"
+            android:layout_gravity="center"
+            android:useDefaultMargins="true"
+            android:id="@+id/ivPhotoAttach"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/civPhoto"
+            android:orientation="horizontal">
+        </GridLayout>
+
+        <LinearLayout
+            android:id="@+id/ivAttach"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivPhotoAttach"
+            android:orientation="vertical">
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvText"
+            style="@style/OtherText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivAttach"
+            android:maxLines="12"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="16dp"
+            tools:text="Post Text" />
+
+    </RelativeLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <!--<View-->
+    <!--android:layout_marginLeft="83dp"-->
+    <!--android:layout_below="@+id/rlItemContainer"-->
+    <!--android:background="@color/divider"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1px" />-->
+
+</RelativeLayout>

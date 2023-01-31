@@ -27,10 +27,13 @@ import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.BuildConfig
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.base.BaseFragment
+import com.twoeightnine.root.xvii.chatowner.ChatOwnerFactory
 import com.twoeightnine.root.xvii.chats.messages.chat.secret.SecretChatActivity
 import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
 import com.twoeightnine.root.xvii.dialogs.adapters.DialogsAdapter
+import com.twoeightnine.root.xvii.dialogs.adapters.StarredGroupsAdapter
 import com.twoeightnine.root.xvii.dialogs.viewmodels.DialogsViewModel
+import com.twoeightnine.root.xvii.model.Group
 import com.twoeightnine.root.xvii.model.Wrapper
 import com.twoeightnine.root.xvii.utils.*
 import com.twoeightnine.root.xvii.utils.contextpopup.ContextPopupItem
@@ -41,7 +44,14 @@ import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.uikit.extensions.applyBottomInsetPadding
 import global.msnthrp.xvii.uikit.extensions.hide
 import global.msnthrp.xvii.uikit.extensions.show
+import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_dialogs.*
+import kotlinx.android.synthetic.main.fragment_dialogs.progressBar
+import kotlinx.android.synthetic.main.fragment_dialogs.rvStarred
+import kotlinx.android.synthetic.main.fragment_dialogs.xviiToolbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -53,6 +63,10 @@ open class DialogsFragment : BaseFragment() {
 
     private val adapter by lazy {
         DialogsAdapter(requireContext(), ::loadMore, ::onClick, ::onLongClick)
+    }
+
+    private val starredAdapter by lazy {
+        StarredGroupsAdapter(requireContext(), ::onStarredClick, ::onStarredLongClick)
     }
 
     override fun getLayoutId() = R.layout.fragment_dialogs
@@ -68,6 +82,7 @@ open class DialogsFragment : BaseFragment() {
             adapter.startLoading()
         }
         rvDialogs.applyBottomInsetPadding()
+        initStarredRecycler()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -80,6 +95,20 @@ open class DialogsFragment : BaseFragment() {
         adapter.startLoading()
 
         LegalAlertDialog(requireContext()).showIfNotAccepted()
+
+        viewModel.getStarred().observe(viewLifecycleOwner, ::showStarred)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.loadStarred()
+        }
+    }
+
+    fun showStarred(data: List<Group>){
+        data?.let{ starredAdapter.update(it) }
     }
 
     private fun initRecycler() {
@@ -160,6 +189,19 @@ open class DialogsFragment : BaseFragment() {
         })
 
         createContextPopup(context ?: return, items).show()
+    }
+
+    private fun initStarredRecycler() {
+        rvStarred.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
+        rvStarred.adapter = starredAdapter
+    }
+
+    private fun onStarredLongClick(group: Group) {
+        showToast(context, group.name)
+    }
+
+    private fun onStarredClick(group: Group) {
+        ChatOwnerFactory.launch(context, group.getPeerId())
     }
 
     companion object {

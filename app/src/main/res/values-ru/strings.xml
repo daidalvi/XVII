@@ -293,6 +293,8 @@
     <string name="add_shortcut">добавить ярлык</string>
     <string name="add_shortcut_to_chat">добавить ярлык в чаты</string>
     <string name="remove_shortcut_from_chat">удалить ярлык из чатов</string>
+    <string name="add_shortcut_to_chat_list">закрепить в списке чатов</string>
+    <string name="remove_shortcut_from_chat_list">удалить из списка чатов</string>
     <string name="poll_anon">анонимный опрос</string>
     <string name="poll_public">открытый опрос</string>
     <string name="share">поделиться</string>
@@ -561,5 +563,8 @@
     <string name="restart">перезапустить</string>
     <string name="restart_send_crash">отправить детали разработчику</string>
     <string name="show_all_users">показать всех %s</string>
+    <string name="edit_profile">редактировать профиль</string>
+    <string name="selected_groups">группы для чтения</string>
+    <string name="group_list">группы</string>
 
 </resources>

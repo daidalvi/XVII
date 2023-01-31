@@ -67,7 +67,11 @@ data class Group(
         val status: String = "",
 
         @SerializedName("members_count")
-        val membersCount: Int = 0
+        val membersCount: Int = 0,
+
+        @SerializedName("site")
+        val site: String = ""
+
 ) : Parcelable, ChatOwner {
 
     override fun getPeerId() = -id
@@ -85,6 +89,6 @@ data class Group(
     }
 
     companion object {
-        const val FIELDS = "place,description,members_count,status"
+        const val FIELDS = "place,description,members_count,status,site"
     }
 }

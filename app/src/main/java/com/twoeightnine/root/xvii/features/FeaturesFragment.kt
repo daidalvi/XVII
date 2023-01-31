@@ -30,6 +30,7 @@ import com.twoeightnine.root.xvii.BuildConfig
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.accounts.fragments.AccountsFragment
 import com.twoeightnine.root.xvii.base.BaseFragment
+import com.twoeightnine.root.xvii.base.FragmentPlacementActivity
 import com.twoeightnine.root.xvii.base.FragmentPlacementActivity.Companion.startFragment
 import com.twoeightnine.root.xvii.chatowner.ChatOwnerFactory
 import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
@@ -38,6 +39,7 @@ import com.twoeightnine.root.xvii.extensions.load
 import com.twoeightnine.root.xvii.features.appearance.AppearanceActivity
 import com.twoeightnine.root.xvii.features.general.GeneralFragment
 import com.twoeightnine.root.xvii.features.notifications.NotificationsFragment
+import com.twoeightnine.root.xvii.groups.fragments.GroupsFragment
 import com.twoeightnine.root.xvii.journal.JournalFragment
 import com.twoeightnine.root.xvii.lg.LgAlertDialog
 import com.twoeightnine.root.xvii.managers.Prefs
@@ -73,7 +75,8 @@ class FeaturesFragment : BaseFragment() {
         xiJournal.setOnClickListener { startFragment<JournalFragment>() }
 
         ivProfileEdit.paint(Munch.color.color50)
-        ivProfileEdit.setOnClickListener { BrowsingUtils.openUrl(context, EDIT_PROFILE_URL) }
+        ivProfileEdit.setOnClickListener { BrowsingUtils.openUrl(context,
+            EDIT_PROFILE_URL) }
         rlAccounts.setOnClickListener { ChatOwnerFactory.launch(context, SessionProvider.userId) }
         xiAccounts.setOnClickListener { startFragment<AccountsFragment>() }
         xiGeneral.setOnClickListener {
@@ -96,6 +99,11 @@ class FeaturesFragment : BaseFragment() {
         xiPrivacy.setOnClickListener { BrowsingUtils.openUrl(context, LegalLinksUtils.getPrivacyPolicyUrl()) }
         xiToS.setOnClickListener { BrowsingUtils.openUrl(context, LegalLinksUtils.getTermsOfServiceUrl()) }
         xiSourceCode.setOnClickListener { BrowsingUtils.openUrl(context, GITHUB_URL) }
+        xiGroups.setOnClickListener {
+            val args = Bundle().apply {}
+            val fragmentClass = GroupsFragment::class.java
+            FragmentPlacementActivity.launch(context, fragmentClass, args)
+        }
 
         tvAbout.text = getString(R.string.aboutbig, BuildConfig.VERSION_NAME, BuildConfig.BUILD_TIME)
         tvAbout.setOnClickListener { showLogDialog() }

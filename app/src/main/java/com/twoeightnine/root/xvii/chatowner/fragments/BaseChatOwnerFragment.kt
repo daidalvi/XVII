@@ -53,7 +53,7 @@ import kotlinx.android.synthetic.main.item_chat_owner_field.view.*
 
 abstract class BaseChatOwnerFragment<T : ChatOwner> : BaseFragment() {
 
-    private val peerId by lazy {
+    protected val peerId by lazy {
         arguments?.getInt(ARG_PEER_ID) ?: 0
     }
     private var chatOwner: ChatOwner? = null
@@ -255,6 +255,7 @@ abstract class BaseChatOwnerFragment<T : ChatOwner> : BaseFragment() {
                     }
                 }
             }
+            onSlideDesc(offset)
         }
 
         override fun onStateChanged(p0: View, state: Int) {
@@ -263,5 +264,8 @@ abstract class BaseChatOwnerFragment<T : ChatOwner> : BaseFragment() {
 
         private fun shouldColorToolbar() = xviiToolbar
                 ?.let { (screenHeight - it.height + 92) <= cvInfo.height } ?: false
+    }
+
+    open fun onSlideDesc(offset: Float) {
     }
 }

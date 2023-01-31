@@ -184,6 +184,13 @@
                 app:itemIcon="@drawable/ic_padlock"
                 app:hasDivider="false"/>
 
+            <com.twoeightnine.root.xvii.uikit.XviiItem
+                android:id="@+id/xiGroups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:itemTitle="@string/selected_groups"
+                app:itemIcon="@drawable/ic_relation" />
+
             <com.twoeightnine.root.xvii.uikit.XviiLabel
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -231,6 +238,7 @@
                 android:layout_height="wrap_content"
                 app:itemTitle="@string/source_code"
                 app:itemIcon="@drawable/ic_source_code" />
+
 
             <TextView
                 android:id="@+id/tvAbout"

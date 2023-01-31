@@ -20,6 +20,7 @@ package com.twoeightnine.root.xvii.wallpost
 
 import android.content.Context
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -127,7 +128,21 @@ class WallPostFragment : BaseFragment() {
             holder.civAvatar.load(group.photo100)
             holder.tvDate.text = getTime(post.date, withSeconds = Prefs.showSeconds)
         }
-        holder.tvPost.text = post.text
+
+        val notEmpty = post.text?.isNotEmpty()?: false
+        if (notEmpty) {
+            val messageText = post.text?: ""
+            val preparedText = wrapMentions(requireContext(), messageText, addClickable = true)
+            holder.tvPost.text = when {
+                EmojiHelper.hasEmojis(messageText) -> EmojiHelper.getEmojied(requireContext(), messageText, preparedText)
+                else -> preparedText
+
+            }
+            holder.tvPost.movementMethod = LinkMovementMethod.getInstance()
+        }else{
+            holder.tvPost.text = post.text
+        }
+
         attachmentsInflater.createViewsFor(post)
                 .forEach(holder.llContainer::addView)
 

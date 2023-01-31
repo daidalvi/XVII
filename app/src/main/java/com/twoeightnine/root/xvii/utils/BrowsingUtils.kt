@@ -23,12 +23,19 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsService
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.twoeightnine.root.xvii.R
+import com.twoeightnine.root.xvii.base.FragmentPlacementActivity
+import com.twoeightnine.root.xvii.chatowner.fragments.BaseChatOwnerFragment
+import com.twoeightnine.root.xvii.chatowner.fragments.ConversationChatOwnerFragment
+import com.twoeightnine.root.xvii.chatowner.fragments.GroupChatOwnerFragment
+import com.twoeightnine.root.xvii.chatowner.fragments.UserChatOwnerFragment
 import com.twoeightnine.root.xvii.lg.L
+import com.twoeightnine.root.xvii.web.WebFragment
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -96,6 +103,14 @@ object BrowsingUtils {
             }
         }
     }
+    fun openUrlInnerBrowser(context: Context?, url: String?, Title: String? = "XVII") {
+        val args = Bundle().apply {
+            putString(WebFragment.ARG_TITLE, Title)
+            putString(WebFragment.ARG_URL, url?: "")
+        }
+        val fragmentClass = WebFragment::class.java
+        FragmentPlacementActivity.launch(context, fragmentClass, args)
+    }
 
     fun getMeaningfulUrl(url: String): String {
         return Uri.parse(url).host ?: url
@@ -114,7 +129,7 @@ object BrowsingUtils {
                 .launchUrl(context, uri)
     }
 
-    private fun openUriIntent(context: Context, uri: Uri, packageName: String? = null) {
+    fun openUriIntent(context: Context, uri: Uri, packageName: String? = null) {
         try {
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = uri

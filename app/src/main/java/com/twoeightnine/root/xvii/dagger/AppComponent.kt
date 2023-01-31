@@ -51,6 +51,7 @@ import com.twoeightnine.root.xvii.dialogs.fragments.DialogsFragment
 import com.twoeightnine.root.xvii.features.FeaturesFragment
 import com.twoeightnine.root.xvii.features.general.GeneralViewModel
 import com.twoeightnine.root.xvii.friends.fragments.FriendsFragment
+import com.twoeightnine.root.xvii.groups.fragments.GroupsFragment
 import com.twoeightnine.root.xvii.journal.JournalViewModel
 import com.twoeightnine.root.xvii.login.LoginActivity
 import com.twoeightnine.root.xvii.login.LoginViewModel
@@ -64,6 +65,7 @@ import com.twoeightnine.root.xvii.search.SearchFragment
 import com.twoeightnine.root.xvii.utils.AppLifecycleTracker
 import com.twoeightnine.root.xvii.utils.DefaultPeerResolver
 import com.twoeightnine.root.xvii.utils.ReloginHandler
+import com.twoeightnine.root.xvii.wall.fragments.WallFragment
 import com.twoeightnine.root.xvii.wallpost.WallPostFragment
 import com.twoeightnine.root.xvii.web.GifViewerFragment
 import dagger.Component
@@ -82,9 +84,11 @@ interface AppComponent {
 
     // fragments
     fun inject(wallPostFragment: WallPostFragment)
+    fun inject(wallFragment: WallFragment)
     fun inject(gifViewerFragment: GifViewerFragment)
     fun inject(accountsFragment: AccountsFragment)
     fun inject(friendsFragment: FriendsFragment)
+    fun inject(groupsFragment: GroupsFragment)
     fun inject(dialogsFragment: DialogsFragment)
     fun inject(dialogsForwardFragment: DialogsForwardFragment)
     fun inject(docAttachmentsFragment: DocAttachmentsFragment)

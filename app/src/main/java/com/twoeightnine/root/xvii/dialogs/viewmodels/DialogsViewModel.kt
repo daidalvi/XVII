@@ -19,14 +19,18 @@
 package com.twoeightnine.root.xvii.dialogs.viewmodels
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.App.Companion.context
 import com.twoeightnine.root.xvii.background.longpoll.models.events.*
+import com.twoeightnine.root.xvii.groups.viewmodel.GroupsViewModel
 import com.twoeightnine.root.xvii.lg.L
 import com.twoeightnine.root.xvii.managers.Prefs
+import com.twoeightnine.root.xvii.model.Group
 import com.twoeightnine.root.xvii.model.WrappedLiveData
 import com.twoeightnine.root.xvii.model.WrappedMutableLiveData
 import com.twoeightnine.root.xvii.model.Wrapper
@@ -41,6 +45,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -60,6 +68,10 @@ class DialogsViewModel(
     private val typingPeerIds =
             MutableLiveData<HashSet<Int>>().apply { value = hashSetOf() }
     private val dialogsLiveData = WrappedMutableLiveData<ArrayList<Dialog>>()
+
+    private val starredLiveData = MutableLiveData<List<Group>>()
+
+    fun getStarred() = starredLiveData as LiveData<ArrayList<Group>>
 
     init {
         longPollSubscription?.dispose()
@@ -372,6 +384,20 @@ class DialogsViewModel(
             is TypingChatEvent -> onTyping(event.peerId)
             is RecordingAudioEvent -> onTyping(event.peerId)
         }
+    }
+
+    fun loadStarred(){
+        val data = context.getSharedPreferences(GroupsViewModel.NAME, Context.MODE_PRIVATE)
+        var starredIds = data.getStringSet(GroupsViewModel.STARRED, setOf<String>())
+
+        if(starredIds == null || starredIds.isEmpty()) return
+
+        api.getGroups(starredIds.joinToString())
+            .subscribeSmart({ groups ->
+                GlobalScope.launch {
+                    withContext(Dispatchers.Main){ starredLiveData.value = groups }
+                }
+            }, ::onErrorOccurred)
     }
 
     private fun l(s: String) {

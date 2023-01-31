@@ -30,6 +30,7 @@
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute">
 
         <activity
@@ -141,6 +142,11 @@
 
         <activity
             android:name=".base.FragmentPlacementActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.Transparent" />
+
+        <activity
+            android:name=".web.WebActivity"
             android:exported="false"
             android:theme="@style/AppTheme.Transparent" />
 

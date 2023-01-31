@@ -23,7 +23,7 @@
     android:id="@+id/flContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background">f
 
     <ImageView
         android:id="@+id/ivKeyPattern"
@@ -47,18 +47,27 @@
 
         <include layout="@layout/view_chat_multiselect" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvStarred"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/xviiToolbar" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_below="@+id/xviiToolbar"
+            android:id="@+id/rvStarredWrapper">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvStarred"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
 
         <com.twoeightnine.root.xvii.views.XviiSwipeRefreshLayout
             android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/rvAttached"
-            android:layout_below="@+id/rvStarred"
+            android:layout_below="@+id/rvStarredWrapper"
             app:srl_direction="bottom">
 
             <androidx.recyclerview.widget.RecyclerView
