@@ -165,4 +165,9 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="NoClickableTag">
+        <item name="android:layout_marginTop">@dimen/text_view_top_margin</item>
+        <item name="android:textColor">@color/no_clickable_tag</item>
+    </style>
+
 </resources>

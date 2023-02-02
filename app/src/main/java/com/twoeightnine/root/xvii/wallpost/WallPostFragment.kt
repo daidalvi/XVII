@@ -132,7 +132,7 @@ class WallPostFragment : BaseFragment() {
         val notEmpty = post.text?.isNotEmpty()?: false
         if (notEmpty) {
             val messageText = post.text?: ""
-            val preparedText = wrapMentions(requireContext(), messageText, addClickable = true)
+            val preparedText = wrapMentions(requireContext(), messageText, addClickable = true, ownerId = post.ownerId)
             holder.tvPost.text = when {
                 EmojiHelper.hasEmojis(messageText) -> EmojiHelper.getEmojied(requireContext(), messageText, preparedText)
                 else -> preparedText

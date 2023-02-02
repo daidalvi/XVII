@@ -108,7 +108,7 @@ class MainActivity : BaseActivity() {
                         putInt(SEARCH_TYPE, CHAT.ordinal)
                     }
                     putString(SEARCH_TEXT, search)
-                    putInt(SEARCH_PEER_ID, extras.getInt(SEARCH_PEER_ID))
+                    putInt(SEARCH_OWNER_ID, extras.getInt(SEARCH_OWNER_ID))
                 }
                 startFragment<SearchFragment>(arguments)
             }
@@ -161,16 +161,16 @@ class MainActivity : BaseActivity() {
     companion object {
 
         const val SEARCH_TEXT = "searchText"
-        const val SEARCH_PEER_ID = "searchPeerID"
+        const val SEARCH_OWNER_ID = "searchPeerID"
         const val SEARCH_TYPE = "searchType"
 
-        fun launch(context: Context?, search:String?= null, peerId: Int=0) {
+        fun launch(context: Context?, search:String?= null, ownerId: Int=0) {
             if(search==null) {
                 launchActivity(context, MainActivity::class.java)
             }else{
                 context?.startActivity(Intent(context, MainActivity::class.java).apply {
                     putExtra(SEARCH_TEXT, search)
-                    putExtra(SEARCH_PEER_ID, peerId)
+                    putExtra(SEARCH_OWNER_ID, ownerId)
                     putExtra(SEARCH_TYPE, GROUP.ordinal)
                 })
             }

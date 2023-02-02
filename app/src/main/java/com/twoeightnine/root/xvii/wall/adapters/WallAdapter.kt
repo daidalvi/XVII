@@ -113,21 +113,13 @@ class WallAdapter(
                 tvInfo.text = getTime(post.date, withSeconds = Prefs.showSeconds)
 
 
-                post.text?.let{
-                    if(it.isNotEmpty()) {
+                post.text?.let{ messageText ->
+                    if(messageText.isNotEmpty()) {
 
-                        tvText.text = if (EmojiHelper.hasEmojis(it)) {
-                            EmojiHelper.getEmojied(
-                                context,
-                                it,
-                                Html.fromHtml(
-                                    getMessageBody(
-                                        context, it, post.ownerId
-                                    )
-                                ) as SpannableStringBuilder
-                            )
-                        } else {
-                            Html.fromHtml(getMessageBody(context, it, post.ownerId))
+                        val preparedText = wrapMentions(context, messageText, addClickable = true, ownerId = post.ownerId)
+                        tvText.text = when {
+                            EmojiHelper.hasEmojis(messageText) -> EmojiHelper.getEmojied(context, messageText, preparedText)
+                            else -> preparedText
                         }
                         tvText.movementMethod = LinkMovementMethod.getInstance()
                     }

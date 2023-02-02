@@ -104,6 +104,7 @@
             android:id="@+id/tvText"
             style="@style/MainText"
             android:autoLink="web"
+            android:textColorLink="@color/link_color"
             android:inputType="textMultiLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -263,7 +263,7 @@ fun goHome(context: Context?) {
     })
 }
 
-fun wrapMentions(context: Context, text: CharSequence, addClickable: Boolean = false, peerId: Int = 0): SpannableStringBuilder {
+fun wrapMentions(context: Context, text: CharSequence, addClickable: Boolean = false, ownerId: Int = 0): SpannableStringBuilder {
     val ssb = SpannableStringBuilder()
     val pattern = Pattern.compile(REGEX_MENTION)
     val matcher = pattern.matcher(text)
@@ -282,11 +282,11 @@ fun wrapMentions(context: Context, text: CharSequence, addClickable: Boolean = f
             if (addClickable) {
                 ssb.setSpan(object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        MainActivity.launch(context, mention, peerId)
+                        MainActivity.launch(context, mention, ownerId)
                     }
                 }, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }else{
-                ssb.setSpan(object : StyleSpan(Typeface.BOLD) {}, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                ssb.setSpan(object : StyleSpan(R.style.NoClickableTag) {}, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
         }else{

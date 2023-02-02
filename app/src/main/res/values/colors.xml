@@ -73,4 +73,6 @@
 
     <color name="message_background_gray">@color/background_message_light</color>
 
+    <color name="no_clickable_tag">#488A56</color>
+
 </resources>

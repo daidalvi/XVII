@@ -78,10 +78,10 @@ class DialogsAdapter(
                     EmojiHelper.getEmojied(
                             context,
                             dialog.text,
-                            Html.fromHtml(getMessageBody(context, dialog)) as SpannableStringBuilder
+                            getMessageBody(context, dialog) as SpannableStringBuilder
                     )
                 } else {
-                    Html.fromHtml(getMessageBody(context, dialog))
+                    getMessageBody(context, dialog)
                 }
 
                 val isTyping = dialog.peerId in typingPeerIds
@@ -98,6 +98,9 @@ class DialogsAdapter(
                 ivUnreadDotOut.setVisible(!dialog.isRead && dialog.isOut)
                 rlUnreadCount.setVisible(!dialog.isRead && !dialog.isOut && dialog.unreadCount > 0)
 
+                if(dialog.isPinned) {
+                    rlItemContainer.setBackgroundColor(Munch.color.color(15))
+                }
                 if (dialog.unreadCount != 0) {
                     val unread = if (dialog.unreadCount > 99) {
                         context.getString(R.string.unread100)

@@ -89,7 +89,7 @@
 
                 <TextView
                     android:id="@+id/tvYou"
-                    style="@style/OtherText"
+                    style="@style/MinorText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/tvBody"
@@ -100,7 +100,7 @@
 
                 <TextView
                     android:id="@+id/tvBody"
-                    style="@style/MainText"
+                    style="@style/OtherText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"

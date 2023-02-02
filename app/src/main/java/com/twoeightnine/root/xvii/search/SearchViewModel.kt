@@ -36,7 +36,7 @@ import javax.inject.Inject
 class SearchViewModel(private val api: ApiService) : ViewModel() {
 
     private var searchType:SEARCH_TYPE = SEARCH_TYPE.CHAT
-    private var searchPeerId = 0
+    private var searchOwnerId = 0
 
     private val resultLiveData = WrappedMutableLiveData<ArrayList<SearchDialog>>()
 
@@ -45,8 +45,8 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
     fun setFrom(type:SEARCH_TYPE){
         searchType = type
     }
-    fun setPeerId(peerId:Int=0){
-        searchPeerId = peerId
+    fun setOwnerId(peerId:Int=0){
+        searchOwnerId = peerId
     }
 
     fun search(q: String, offset: Int =0) {
@@ -97,7 +97,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                 /****************************/
                 SEARCH_TYPE.GROUP ->
 
-                api.wallSearch(searchPeerId, q, WallViewModel.COUNT, offset)
+                api.wallSearch(searchOwnerId, q, WallViewModel.COUNT, offset)
                         .subscribeSmart({ response ->
                             val dialogs = arrayListOf<SearchDialog>()
                             val mResp = response

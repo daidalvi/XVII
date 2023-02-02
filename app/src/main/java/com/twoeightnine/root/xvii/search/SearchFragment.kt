@@ -60,8 +60,8 @@ class SearchFragment : BaseFragment() {
         arguments?.getString(MainActivity.SEARCH_TEXT)
     }
 
-    private val searchPeerId by lazy {
-        arguments?.getInt(MainActivity.SEARCH_PEER_ID)?: 0
+    private val searchOwnerId by lazy {
+        arguments?.getInt(MainActivity.SEARCH_OWNER_ID)?: 0
     }
 
     private val adapter by lazy {
@@ -77,7 +77,7 @@ class SearchFragment : BaseFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)[SearchViewModel::class.java]
 
         viewModel.setFrom(searchType)
-        viewModel.setPeerId(searchPeerId)
+        viewModel.setOwnerId(searchOwnerId)
         etSearch.subscribeSearch(true, viewModel::search)
         searchString?.let {
             etSearch.setText(it.toString())
