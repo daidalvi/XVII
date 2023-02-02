@@ -108,7 +108,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                                         messageId = wallPost.id ?: 0,
                                         text = wallPost.text ?: "",
                                         title = group.getTitle(),
-                                        photo = group.getAvatar(),
+                                        photo = group.photo100,
                                         type = SEARCH_TYPE.GROUP
                                 )
                                 dialogs.add(dlg)
@@ -151,7 +151,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
 
     private fun getGroup(ownerId: Int, response: WallPostResponse): Group {
         for (group in response.groups) {
-            if (group.id == ownerId) {
+            if (group.getPeerId() == ownerId) {
                 return group
             }
         }

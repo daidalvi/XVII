@@ -62,7 +62,9 @@ class WallAdapter(
 
     private val defaultRadius = resources.getDimensionPixelSize(R.dimen.default_radius)
 
-    private val picturesSpacing = SizeUtils.pxFromDp(context, 5)
+    private val defaultRadiusMin = SizeUtils.pxFromDp(context, 10)
+
+    private val picturesSpacing = SizeUtils.pxFromDp(context, 4)
 
     private val wpCallback:WallFragment.WallPostCallback = wallPostCallback(context)
 
@@ -203,7 +205,7 @@ class WallAdapter(
             val roundedImageView = RoundedImageView(context).apply {
                 updatePadding(0, 0, 0, 0)
             }
-            roundedImageView.cornerRadius = defaultRadius.toFloat()
+            roundedImageView.cornerRadius = defaultRadiusMin.toFloat()
 
             val photoSize = photo.getOptimalPhoto()
                 ?: photo.getMediumPhoto()
@@ -228,15 +230,18 @@ class WallAdapter(
                 when{
                     count == 1 -> {
                         ivHeight = hCalc
+                        roundedImageView.cornerRadius = defaultRadius.toFloat()
                     }
                     count == 3 ->{
                         // as is in 2 cells
+                        roundedImageView.cornerRadius = defaultRadiusMin.toFloat()
                         param.columnSpec = GridLayout.spec(0, 2)
                         width=(width + picturesSpacing) * 2
                         ivHeight = hCalc * 2
                     }
                     count > 4 && count % 3 == 1 ->{
                         // as is in 3 cells
+                        roundedImageView.cornerRadius = defaultRadiusMin.toFloat()
                         param.columnSpec = GridLayout.spec(0, 3)
                         width=(width + picturesSpacing) * 3
                         ivHeight = hCalc * 3
@@ -258,8 +263,8 @@ class WallAdapter(
 
             param.height = ivHeight
             param.width = width
-            /*param.rightMargin = 5
-            param.topMargin = 5*/
+            param.rightMargin = picturesSpacing
+            param.topMargin = picturesSpacing
             param.setGravity(Gravity.CENTER)
 
 

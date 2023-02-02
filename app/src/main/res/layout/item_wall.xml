@@ -82,9 +82,8 @@
             android:columnCount="3"
             android:horizontalSpacing="0dp"
             android:verticalSpacing="0dp"
-            android:layout_marginEnd="3dp"
+            android:layout_marginEnd="0dp"
             android:layout_gravity="center"
-            android:useDefaultMargins="true"
             android:id="@+id/ivPhotoAttach"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,7 +123,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:layout_marginEnd="20dp"/>
 
     </RelativeLayout>
 

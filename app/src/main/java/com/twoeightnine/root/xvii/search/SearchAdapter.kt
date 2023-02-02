@@ -63,7 +63,7 @@ class SearchAdapter(
         fun bind(dialog: SearchDialog) {
             with(itemView) {
                 civPhoto.load(dialog.photo)
-                if (dialog.type == SEARCH_TYPE.FRIENDS) {
+                if (dialog.type != SEARCH_TYPE.FRIENDS) {
                     tvTitle.text = dialog.title
                     tvTitle.lowerIf(Prefs.lowerTexts)
                     tvBody.text = if (EmojiHelper.hasEmojis(dialog.text)) {

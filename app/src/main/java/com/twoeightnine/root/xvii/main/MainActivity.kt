@@ -102,11 +102,7 @@ class MainActivity : BaseActivity() {
         intent.extras?.let{extras->
             extras.getString(SEARCH_TEXT)?.let{search->
                 var arguments = Bundle().apply {
-                    if(bottomNavView.selectedItemId==R.id.menu_friends){
-                        putInt(SEARCH_TYPE, FRIENDS.ordinal)
-                    }else{
-                        putInt(SEARCH_TYPE, CHAT.ordinal)
-                    }
+                    putInt(SEARCH_TYPE, extras.getInt(SEARCH_TYPE))
                     putString(SEARCH_TEXT, search)
                     putInt(SEARCH_OWNER_ID, extras.getInt(SEARCH_OWNER_ID))
                 }
@@ -171,7 +167,9 @@ class MainActivity : BaseActivity() {
                 context?.startActivity(Intent(context, MainActivity::class.java).apply {
                     putExtra(SEARCH_TEXT, search)
                     putExtra(SEARCH_OWNER_ID, ownerId)
-                    putExtra(SEARCH_TYPE, GROUP.ordinal)
+                    if(ownerId<0){
+                        putExtra(MainActivity.SEARCH_TYPE, GROUP.ordinal)
+                    }
                 })
             }
         }

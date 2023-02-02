@@ -54,6 +54,8 @@ class SearchFragment : BaseFragment() {
     var lastAdded: Int = 0
 
     private val searchType by lazy {
+        val zz = arguments?.getString(MainActivity.SEARCH_TYPE)
+        val zz2 = arguments?.getString(MainActivity.SEARCH_TEXT)
         SEARCH_TYPE.values()[arguments?.getInt(MainActivity.SEARCH_TYPE)?: SEARCH_TYPE.CHAT.ordinal]
     }
     private val searchString by lazy {

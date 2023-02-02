@@ -74,15 +74,9 @@ class DialogsAdapter(
 
                 tvTitle.text = dialog.aliasOrTitle
                 tvTitle.lowerIf(Prefs.lowerTexts)
-                tvBody.text = if (EmojiHelper.hasEmojis(dialog.text)) {
-                    EmojiHelper.getEmojied(
-                            context,
-                            dialog.text,
-                            getMessageBody(context, dialog) as SpannableStringBuilder
-                    )
-                } else {
-                    getMessageBody(context, dialog)
-                }
+
+
+                tvBody.text = getMessageBody(dialog)
 
                 val isTyping = dialog.peerId in typingPeerIds
                 typingView.setVisible(isTyping)
@@ -99,7 +93,7 @@ class DialogsAdapter(
                 rlUnreadCount.setVisible(!dialog.isRead && !dialog.isOut && dialog.unreadCount > 0)
 
                 if(dialog.isPinned) {
-                    rlItemContainer.setBackgroundColor(Munch.color.color(15))
+                    rlItemContainer.setBackgroundColor(Munch.color.color(5))
                 }
                 if (dialog.unreadCount != 0) {
                     val unread = if (dialog.unreadCount > 99) {
@@ -123,11 +117,22 @@ class DialogsAdapter(
             }
         }
 
-        private fun getMessageBody(context: Context, dialog: Dialog): String {
+        private fun getMessageBody(dialog: Dialog): SpannableStringBuilder {
+
             if (dialog.text.isNotEmpty()) {
-                return wrapMentions(context, dialog.text).toString()
+
+                val preparedText = wrapMentions(context, dialog.text)
+                return when {
+                    EmojiHelper.hasEmojis(dialog.text) -> EmojiHelper.getEmojied(
+                        context,
+                        dialog.text,
+                        preparedText
+                    )
+                    else -> preparedText
+
+                }
             }
-            return context.getString(R.string.error_message)
+            return Html.fromHtml(context.getString(R.string.error_message)) as SpannableStringBuilder
         }
     }
 }

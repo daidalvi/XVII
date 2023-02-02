@@ -69,7 +69,8 @@ class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
             fabGotoSite.setVisible(true)
             fabGotoSite.setOnClickListener {
                 fabGotoSite?.also {
-                    BrowsingUtils.openUrlInnerBrowser(context, group.site, group.name)
+                    //openUrlInnerBrowser - group.name
+                    BrowsingUtils.openUrl(context, group.site, true)
                 }
             }
         }
@@ -96,11 +97,8 @@ class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
     }
 
     private fun onClick(s: String) {
-        context?.let{ BrowsingUtils.openUriIntent(it, Uri.parse(URL_VK+s))}
-    }
-    private fun onClickSite(s: String) {
-        if(s.isNotEmpty())
-            BrowsingUtils.openUrlInnerBrowser(context, s)
+        // openUriIntent
+        context?.let{ BrowsingUtils.openUrl(it, URL_VK+s)}
     }
 
     override fun getBottomPaddableView(): View = vBottom
