@@ -1,5 +1,11 @@
 package com.twoeightnine.root.xvii.search
 
+enum class SEARCH_TYPE {
+    CHAT,
+    FRIENDS,
+    GROUP
+}
+
 data class SearchDialog(
 
     var peerId: Int,
@@ -12,10 +18,10 @@ data class SearchDialog(
 
     var photo: String?,
 
-    var isOnline: Boolean,
+    var isOnline: Boolean = false,
 
     var isOut: Boolean = true,
 
-    var isChat: Boolean = false
+    var type: SEARCH_TYPE = SEARCH_TYPE.CHAT
 
 )

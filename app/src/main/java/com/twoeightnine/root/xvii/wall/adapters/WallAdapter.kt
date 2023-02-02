@@ -85,8 +85,8 @@ class WallAdapter(
         holder.bind(items[position])
     }
 
-    private fun getMessageBody(context: Context, text: String): String {
-        return wrapMentions(context, text, true).toString()
+    private fun getMessageBody(context: Context, text: String, ownerId:Int): String {
+        return wrapMentions(context, text, true, ownerId).toString()
     }
 
     inner class WallViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -122,13 +122,12 @@ class WallAdapter(
                                 it,
                                 Html.fromHtml(
                                     getMessageBody(
-                                        context,
-                                        it
+                                        context, it, post.ownerId
                                     )
                                 ) as SpannableStringBuilder
                             )
                         } else {
-                            Html.fromHtml(getMessageBody(context, it))
+                            Html.fromHtml(getMessageBody(context, it, post.ownerId))
                         }
                         tvText.movementMethod = LinkMovementMethod.getInstance()
                     }

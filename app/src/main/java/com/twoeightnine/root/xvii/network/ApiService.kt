@@ -302,6 +302,7 @@ interface ApiService {
         @Query("fields") fields: String = Group.FIELDS
     ): Flowable<BaseResponse<ListResponse<Group>>>
 
+
     //account
 
     @GET("account.setOffline")
@@ -398,6 +399,14 @@ interface ApiService {
         @Query("fields") fields: String = Group.FIELDS+","+User.FIELDS
     ): Flowable<BaseResponse<WallPostResponse>>
 
+    @GET("wall.search?extended=1")
+    fun wallSearch(
+            @Query("owner_id") ownerId: Int,
+            @Query("query") q: String,
+            @Query("count") count: Int,
+            @Query("offset") offset: Int,
+            @Query("fields") fields: String = Group.FIELDS+","+User.FIELDS
+    ): Flowable<BaseResponse<WallPostResponse>>
 
     @GET("wall.repost")
     fun repost(@Query("object") obj: String): Flowable<BaseResponse<JSONObject>>

@@ -51,6 +51,7 @@ import global.msnthrp.xvii.uikit.extensions.applyTopInsetMargin
 import global.msnthrp.xvii.uikit.extensions.isVisible
 import global.msnthrp.xvii.uikit.extensions.setVisible
 import kotlinx.android.synthetic.main.activity_main.*
+import com.twoeightnine.root.xvii.search.SEARCH_TYPE.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -78,7 +79,11 @@ class MainActivity : BaseActivity() {
 
         ivSearch.setOnClickListener {
             var arguments = Bundle().apply {
-                putBoolean(SELECTED_FRIENDS, bottomNavView.selectedItemId==R.id.menu_friends)
+                if(bottomNavView.selectedItemId==R.id.menu_friends){
+                    putInt(SEARCH_TYPE, FRIENDS.ordinal)
+                }else{
+                    putInt(SEARCH_TYPE, CHAT.ordinal)
+                }
             }
             startFragment<SearchFragment>(arguments)
         }
@@ -94,12 +99,16 @@ class MainActivity : BaseActivity() {
             insets
         }
 
-        intent.extras?.let{
-            it.getString(SEARCH_TEXT)?.let{
-                val search = it;
+        intent.extras?.let{extras->
+            extras.getString(SEARCH_TEXT)?.let{search->
                 var arguments = Bundle().apply {
-                    putBoolean(SELECTED_FRIENDS, bottomNavView.selectedItemId==R.id.menu_friends)
+                    if(bottomNavView.selectedItemId==R.id.menu_friends){
+                        putInt(SEARCH_TYPE, FRIENDS.ordinal)
+                    }else{
+                        putInt(SEARCH_TYPE, CHAT.ordinal)
+                    }
                     putString(SEARCH_TEXT, search)
+                    putInt(SEARCH_PEER_ID, extras.getInt(SEARCH_PEER_ID))
                 }
                 startFragment<SearchFragment>(arguments)
             }
@@ -152,14 +161,17 @@ class MainActivity : BaseActivity() {
     companion object {
 
         const val SEARCH_TEXT = "searchText"
-        const val SELECTED_FRIENDS = "selectedFriends"
+        const val SEARCH_PEER_ID = "searchPeerID"
+        const val SEARCH_TYPE = "searchType"
 
-        fun launch(context: Context?, search:String?= null) {
+        fun launch(context: Context?, search:String?= null, peerId: Int=0) {
             if(search==null) {
                 launchActivity(context, MainActivity::class.java)
             }else{
                 context?.startActivity(Intent(context, MainActivity::class.java).apply {
-                    putExtra(MainActivity.SEARCH_TEXT, search)
+                    putExtra(SEARCH_TEXT, search)
+                    putExtra(SEARCH_PEER_ID, peerId)
+                    putExtra(SEARCH_TYPE, GROUP.ordinal)
                 })
             }
         }

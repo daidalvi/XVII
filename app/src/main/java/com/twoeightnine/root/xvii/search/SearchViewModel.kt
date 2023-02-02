@@ -22,16 +22,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.managers.Prefs
-import com.twoeightnine.root.xvii.model.User
-import com.twoeightnine.root.xvii.model.WrappedLiveData
-import com.twoeightnine.root.xvii.model.WrappedMutableLiveData
-import com.twoeightnine.root.xvii.model.Wrapper
+import com.twoeightnine.root.xvii.model.*
 import com.twoeightnine.root.xvii.network.ApiService
-import com.twoeightnine.root.xvii.network.response.BaseResponse
-import com.twoeightnine.root.xvii.network.response.ListResponse
-import com.twoeightnine.root.xvii.network.response.SearchConversationsResponse
-import com.twoeightnine.root.xvii.network.response.SearchResponse
+import com.twoeightnine.root.xvii.network.response.*
 import com.twoeightnine.root.xvii.utils.subscribeSmart
+import com.twoeightnine.root.xvii.wall.viewmodel.WallViewModel
 import global.msnthrp.xvii.data.dialogs.Dialog
 import io.reactivex.Flowable
 import io.reactivex.functions.Function3
@@ -40,14 +35,18 @@ import javax.inject.Inject
 
 class SearchViewModel(private val api: ApiService) : ViewModel() {
 
-    var fromFriendsPage = false
+    private var searchType:SEARCH_TYPE = SEARCH_TYPE.CHAT
+    private var searchPeerId = 0
 
     private val resultLiveData = WrappedMutableLiveData<ArrayList<SearchDialog>>()
 
     fun getResult() = resultLiveData as WrappedLiveData<ArrayList<SearchDialog>>
 
-    fun setFrom(fromFriends:Boolean){
-        fromFriendsPage = fromFriends
+    fun setFrom(type:SEARCH_TYPE){
+        searchType = type
+    }
+    fun setPeerId(peerId:Int=0){
+        searchPeerId = peerId
     }
 
     fun search(q: String, offset: Int =0) {
@@ -63,34 +62,71 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                 resultLiveData.value = Wrapper(arrayListOf())
             }
         } else {
-            if (!fromFriendsPage) {
+            when (searchType) {
+
+                /****************************/
+                SEARCH_TYPE.CHAT ->
+
                 api.search(q, COUNT, offset).subscribeSmart({ response ->
                     val dialogs = arrayListOf<SearchDialog>()
                     val mResp = response
                     mResp?.items?.forEach { msg ->
                         var dlg = SearchDialog(
-                            peerId = msg.peerId ?: 0,
-                            messageId = msg.id ?: 0,
-                            text = msg.text ?: "",
-                            title = mResp.getTitleFor(msg) ?: "",
-                            photo = mResp.getPhotoFor(msg) ?: "",
-                            isOnline = mResp.isOnline(msg),
-                            isOut = msg.isOut(),
-                            isChat = true
+                                peerId = msg.peerId ?: 0,
+                                messageId = msg.id ?: 0,
+                                text = msg.text ?: "",
+                                title = mResp.getTitleFor(msg) ?: "",
+                                photo = mResp.getPhotoFor(msg) ?: "",
+                                isOnline = mResp.isOnline(msg),
+                                isOut = msg.isOut(),
+                                type = SEARCH_TYPE.CHAT
                         )
                         dialogs.add(dlg)
                     }
-                    if(offset > 0) {
+                    if (offset > 0) {
                         resultLiveData.value?.data?.addAll(ArrayList(dialogs.distinctBy { it.messageId }))
                         resultLiveData.value = Wrapper(resultLiveData.value?.data)
-                    }else {
+                    } else {
                         resultLiveData.value =
-                            Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
+                                Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
                     }
                 }, { error ->
                     resultLiveData.value = Wrapper(error = error)
                 })
-            }else{
+
+                /****************************/
+                SEARCH_TYPE.GROUP ->
+
+                api.wallSearch(searchPeerId, q, WallViewModel.COUNT, offset)
+                        .subscribeSmart({ response ->
+                            val dialogs = arrayListOf<SearchDialog>()
+                            val mResp = response
+                            mResp?.items?.forEach { wallPost ->
+                                val group = getGroup(wallPost.ownerId, response)
+                                var dlg = SearchDialog(
+                                        peerId = wallPost.ownerId ?: 0,
+                                        messageId = wallPost.id ?: 0,
+                                        text = wallPost.text ?: "",
+                                        title = group.getTitle(),
+                                        photo = group.getAvatar(),
+                                        type = SEARCH_TYPE.GROUP
+                                )
+                                dialogs.add(dlg)
+                            }
+                            if (offset > 0) {
+                                resultLiveData.value?.data?.addAll(ArrayList(dialogs.distinctBy { it.messageId }))
+                                resultLiveData.value = Wrapper(resultLiveData.value?.data)
+                            } else {
+                                resultLiveData.value =
+                                        Wrapper(ArrayList(dialogs.distinctBy { it.messageId }))
+                            }
+                        }, { error ->
+                            resultLiveData.value = Wrapper(error = error)
+                        })
+
+                /****************************/
+                SEARCH_TYPE.FRIENDS ->
+
                 Flowable.zip(
                     api.searchFriends(q, User.FIELDS, COUNT, offset),
                     api.searchUsers(q, User.FIELDS, COUNT, offset),
@@ -113,12 +149,22 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
         }
     }
 
+    private fun getGroup(ownerId: Int, response: WallPostResponse): Group {
+        for (group in response.groups) {
+            if (group.id == ownerId) {
+                return group
+            }
+        }
+        return Group()
+    }
+
     private fun createFromUser(user: User) = SearchDialog(
             peerId = user.id,
             messageId = user.id,
             title = user.fullName,
             photo = user.photo100,
-            isOnline = user.isOnline
+            isOnline = user.isOnline,
+            type = SEARCH_TYPE.FRIENDS
     )
 
     companion object {
@@ -149,7 +195,8 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                         messageId = conversation.peer?.id ?: 0,
                         title = cResp.getTitleFor(conversation) ?: "",
                         photo = cResp.getPhotoFor(conversation) ?: "",
-                        isOnline = cResp.isOnline(conversation)
+                        isOnline = cResp.isOnline(conversation),
+                        type = SEARCH_TYPE.FRIENDS
                 ))
             }
             users.response?.items?.forEach { dialogs.add(createFromUser(it)) }

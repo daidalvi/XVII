@@ -27,6 +27,7 @@ import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.BuildConfig
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.base.BaseFragment
+import com.twoeightnine.root.xvii.base.FragmentPlacementActivity.Companion.startFragment
 import com.twoeightnine.root.xvii.chatowner.ChatOwnerFactory
 import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
 import com.twoeightnine.root.xvii.main.MainActivity
@@ -37,6 +38,7 @@ import com.twoeightnine.root.xvii.utils.hideKeyboard
 import com.twoeightnine.root.xvii.utils.notifications.NotificationUtils
 import com.twoeightnine.root.xvii.utils.showError
 import com.twoeightnine.root.xvii.utils.subscribeSearch
+import com.twoeightnine.root.xvii.wallpost.WallPostFragment
 import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.uikit.extensions.applyBottomInsetPadding
 import global.msnthrp.xvii.uikit.extensions.applyTopInsetMargin
@@ -51,11 +53,15 @@ class SearchFragment : BaseFragment() {
     private lateinit var viewModel: SearchViewModel
     var lastAdded: Int = 0
 
-    private val selectedFriends by lazy {
-        arguments?.getBoolean(MainActivity.SELECTED_FRIENDS)?: false
+    private val searchType by lazy {
+        SEARCH_TYPE.values()[arguments?.getInt(MainActivity.SEARCH_TYPE)?: SEARCH_TYPE.CHAT.ordinal]
     }
     private val searchString by lazy {
         arguments?.getString(MainActivity.SEARCH_TEXT)
+    }
+
+    private val searchPeerId by lazy {
+        arguments?.getInt(MainActivity.SEARCH_PEER_ID)?: 0
     }
 
     private val adapter by lazy {
@@ -70,7 +76,8 @@ class SearchFragment : BaseFragment() {
         App.appComponent?.inject(this)
         viewModel = ViewModelProviders.of(this, viewModelFactory)[SearchViewModel::class.java]
 
-        viewModel.setFrom(selectedFriends)
+        viewModel.setFrom(searchType)
+        viewModel.setPeerId(searchPeerId)
         etSearch.subscribeSearch(true, viewModel::search)
         searchString?.let {
             etSearch.setText(it.toString())
@@ -111,11 +118,16 @@ class SearchFragment : BaseFragment() {
                 isOnline = sDialog.isOnline,
                 isOut = sDialog.isOut
             )
-        if (sDialog.isChat){
-            ChatActivity.launch(context, dialog, true)
-        }else {
-            ChatOwnerFactory.launch(context, dialog.peerId)
+        when(sDialog.type){
+            SEARCH_TYPE.CHAT -> ChatActivity.launch(context, dialog, true)
+            SEARCH_TYPE.FRIENDS -> ChatOwnerFactory.launch(context, dialog.peerId)
+            else -> {
+                val pid = "${dialog.peerId}_${dialog.messageId}"
+                context.startFragment<WallPostFragment>(WallPostFragment.createArgs(pid))
+            }
         }
+
+
     }
 
     private fun onLongClick(sDialog: SearchDialog) {
