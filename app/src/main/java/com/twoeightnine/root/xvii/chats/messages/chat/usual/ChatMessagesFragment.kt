@@ -34,10 +34,7 @@ import com.twoeightnine.root.xvii.lg.L
 import com.twoeightnine.root.xvii.lg.TextEventTransformer
 import com.twoeightnine.root.xvii.managers.Prefs
 import com.twoeightnine.root.xvii.model.attachments.Doc
-import com.twoeightnine.root.xvii.utils.ReportTool
-import com.twoeightnine.root.xvii.utils.getTime
-import com.twoeightnine.root.xvii.utils.matchesUserId
-import com.twoeightnine.root.xvii.utils.time
+import com.twoeightnine.root.xvii.utils.*
 import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.uikit.extensions.asText
 import kotlinx.android.synthetic.main.chat_input_panel.*
@@ -79,6 +76,10 @@ class ChatMessagesFragment : BaseChatMessagesFragment<ChatMessagesViewModel>() {
                 startFragment<AttachmentsFragment>(AttachmentsFragment.createArgs(peerId))
                 true
             }
+            R.id.menu_open_url -> {
+                BrowsingUtils.openUrl(context, CHAT_PEER_URL+peerId, ignoreNative = true)
+                true
+            }
             R.id.menu_secret_chat -> {
                 SecretChatActivity.launch(context, peerId, title, photo)
                 true
@@ -99,6 +100,8 @@ class ChatMessagesFragment : BaseChatMessagesFragment<ChatMessagesViewModel>() {
     }
 
     companion object {
+
+        const val CHAT_PEER_URL = "https://m.vk.com/im?sel=" //"https://m.vk.com/mail?act=show&chat="
 
         fun newInstance(dialog: Dialog, forwarded: String? = null,
                         shareText: String? = null, shareImages: List<String> = emptyList(),

@@ -44,11 +44,8 @@ import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.uikit.extensions.applyBottomInsetPadding
 import global.msnthrp.xvii.uikit.extensions.hide
 import global.msnthrp.xvii.uikit.extensions.show
-import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_dialogs.*
-import kotlinx.android.synthetic.main.fragment_dialogs.progressBar
-import kotlinx.android.synthetic.main.fragment_dialogs.rvStarred
-import kotlinx.android.synthetic.main.fragment_dialogs.xviiToolbar
+import kotlinx.android.synthetic.main.toolbar2.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,6 +80,11 @@ open class DialogsFragment : BaseFragment() {
         }
         rvDialogs.applyBottomInsetPadding()
         initStarredRecycler()
+
+        ivToolbarLogo.setOnClickListener{
+            BrowsingUtils.openUrl(context, CHAT_URL, ignoreNative = true)
+
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -205,6 +207,9 @@ open class DialogsFragment : BaseFragment() {
     }
 
     companion object {
+        const val CHAT_URL = "https://m.vk.com/mail"
+
+
         fun newInstance() = DialogsFragment()
     }
 }
