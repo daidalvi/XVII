@@ -82,7 +82,7 @@ open class DialogsFragment : BaseFragment() {
         initStarredRecycler()
 
         ivToolbarLogo.setOnClickListener{
-            BrowsingUtils.openUrl(context, CHAT_URL, ignoreNative = true)
+            BrowsingUtils.openUrl(context, BOOKMARKS_URL, ignoreNative = true)
 
         }
     }
@@ -207,7 +207,7 @@ open class DialogsFragment : BaseFragment() {
     }
 
     companion object {
-        const val CHAT_URL = "https://m.vk.com/mail"
+        const val BOOKMARKS_URL = "https://m.vk.com/bookmarks"
 
 
         fun newInstance() = DialogsFragment()
