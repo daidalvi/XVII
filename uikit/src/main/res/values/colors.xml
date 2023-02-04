@@ -46,4 +46,7 @@
 
     <color name="minor_text_light">#888</color>
     <color name="minor_text_dark">#666</color>
+
+    <color name="secondary_text_light">#666</color>
+    <color name="secondary_text_dark">#888</color>
 </resources>

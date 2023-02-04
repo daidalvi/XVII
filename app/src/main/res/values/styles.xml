@@ -116,6 +116,11 @@
         <item name="android:textColor">@color/minor_text</item>
     </style>
 
+    <style name="SecondaryText">
+        <item name="android:layout_marginTop">@dimen/text_view_top_margin</item>
+        <item name="android:textColor">@color/secondary_text</item>
+    </style>
+
     <style name="AccentText">
         <item name="android:layout_marginTop">@dimen/text_view_top_margin</item>
         <item name="android:textColor">@color/accent</item>
@@ -163,11 +168,6 @@
     <style name="RedButton" parent="Button">
         <item name="android:background">@drawable/shape_button_red</item>
         <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="NoClickableTag">
-        <item name="android:layout_marginTop">@dimen/text_view_top_margin</item>
-        <item name="android:textColor">@color/no_clickable_tag</item>
     </style>
 
 </resources>

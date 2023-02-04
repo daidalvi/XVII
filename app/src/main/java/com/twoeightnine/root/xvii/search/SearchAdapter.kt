@@ -29,6 +29,7 @@ import com.twoeightnine.root.xvii.extensions.load
 import com.twoeightnine.root.xvii.managers.Prefs
 import com.twoeightnine.root.xvii.utils.EmojiHelper
 import com.twoeightnine.root.xvii.utils.wrapMentions
+import global.msnthrp.xvii.data.dialogs.Dialog
 import global.msnthrp.xvii.uikit.base.adapters.BaseAdapter
 import global.msnthrp.xvii.uikit.extensions.hide
 import global.msnthrp.xvii.uikit.extensions.lowerIf
@@ -51,11 +52,22 @@ class SearchAdapter(
         holder.bind(items[position])
     }
 
-    private fun getMessageBody(context: Context, dialog: SearchDialog): String {
+    private fun getMessageBody(dialog: SearchDialog): SpannableStringBuilder {
+
         if (dialog.text.isNotEmpty()) {
-            return wrapMentions(context, dialog.text).toString()
+
+            val preparedText = wrapMentions(context, dialog.text)
+            return when {
+                EmojiHelper.hasEmojis(dialog.text) -> EmojiHelper.getEmojied(
+                    context,
+                    dialog.text,
+                    preparedText
+                )
+                else -> preparedText
+
+            }
         }
-        return context.getString(R.string.error_message)
+        return Html.fromHtml(context.getString(R.string.error_message)) as SpannableStringBuilder
     }
 
     inner class SearchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -66,15 +78,7 @@ class SearchAdapter(
                 if (dialog.type != SEARCH_TYPE.FRIENDS) {
                     tvTitle.text = dialog.title
                     tvTitle.lowerIf(Prefs.lowerTexts)
-                    tvBody.text = if (EmojiHelper.hasEmojis(dialog.text)) {
-                        EmojiHelper.getEmojied(
-                            context,
-                            dialog.text,
-                            Html.fromHtml(getMessageBody(context, dialog)) as SpannableStringBuilder
-                        )
-                    } else {
-                        Html.fromHtml(getMessageBody(context, dialog))
-                    }
+                    tvBody.text = getMessageBody(dialog)
                 }else{
                     tvTitleSingle.text = dialog.title
                     tvTitleSingle.lowerIf(Prefs.lowerTexts)

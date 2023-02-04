@@ -37,6 +37,7 @@
     <color name="main_text">@color/main_text_dark</color>
     <color name="other_text">@color/other_text_dark</color>
     <color name="minor_text">@color/minor_text_dark</color>
+    <color name="secondary_text">@color/secondary_text_dark</color>
     <color name="warn_text">#D35A5A</color>
     <color name="fab">@color/background_dark_lighter</color>
     <color name="accent">#fff</color>
@@ -66,7 +67,5 @@
     <color name="text_diff_remove_background">#372A2A</color>
 
     <color name="message_background_gray">@color/background_message_dark</color>
-
-    <color name="no_clickable_tag">#72CD85</color>
 
 </resources>

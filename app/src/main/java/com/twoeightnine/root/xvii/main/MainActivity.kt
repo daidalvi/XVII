@@ -105,6 +105,7 @@ class MainActivity : BaseActivity() {
                     putInt(SEARCH_TYPE, extras.getInt(SEARCH_TYPE))
                     putString(SEARCH_TEXT, search)
                     putInt(SEARCH_OWNER_ID, extras.getInt(SEARCH_OWNER_ID))
+                    putString(SEARCH_SCREEN_NAME, extras.getString(SEARCH_SCREEN_NAME))
                 }
                 startFragment<SearchFragment>(arguments)
             }
@@ -159,15 +160,17 @@ class MainActivity : BaseActivity() {
         const val SEARCH_TEXT = "searchText"
         const val SEARCH_OWNER_ID = "searchPeerID"
         const val SEARCH_TYPE = "searchType"
+        const val SEARCH_SCREEN_NAME = "searchScreenName"
 
-        fun launch(context: Context?, search:String?= null, ownerId: Int=0) {
+        fun launch(context: Context?, search:String?= null, ownerId: Int=0, screenName:String="") {
             if(search==null) {
                 launchActivity(context, MainActivity::class.java)
             }else{
                 context?.startActivity(Intent(context, MainActivity::class.java).apply {
                     putExtra(SEARCH_TEXT, search)
                     putExtra(SEARCH_OWNER_ID, ownerId)
-                    if(ownerId<0){
+                    putExtra(SEARCH_SCREEN_NAME, screenName)
+                    if(ownerId<0 || screenName.isNotEmpty()){
                         putExtra(MainActivity.SEARCH_TYPE, GROUP.ordinal)
                     }
                 })

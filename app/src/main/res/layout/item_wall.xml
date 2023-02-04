@@ -111,6 +111,7 @@
             android:id="@+id/tvText"
             style="@style/MainText"
             android:autoLink="web"
+            android:textColorHighlight="@android:color/transparent"
             android:textColorLink="@color/link_color"
             android:inputType="textMultiLine"
             android:layout_width="match_parent"

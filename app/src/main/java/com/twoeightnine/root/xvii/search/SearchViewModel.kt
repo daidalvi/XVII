@@ -37,6 +37,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
 
     private var searchType:SEARCH_TYPE = SEARCH_TYPE.CHAT
     private var searchOwnerId = 0
+    private var searchScreenName = ""
 
     private val resultLiveData = WrappedMutableLiveData<ArrayList<SearchDialog>>()
 
@@ -47,6 +48,10 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
     }
     fun setOwnerId(peerId:Int=0){
         searchOwnerId = peerId
+    }
+
+    fun searchScreenName(screenName: String="") {
+        searchScreenName = screenName
     }
 
     fun search(q: String, offset: Int =0) {
@@ -97,7 +102,7 @@ class SearchViewModel(private val api: ApiService) : ViewModel() {
                 /****************************/
                 SEARCH_TYPE.GROUP ->
 
-                api.wallSearch(searchOwnerId, q, WallViewModel.COUNT, offset)
+                api.wallSearch(searchOwnerId, searchScreenName, q, WallViewModel.COUNT, offset)
                         .subscribeSmart({ response ->
                             val dialogs = arrayListOf<SearchDialog>()
                             val mResp = response

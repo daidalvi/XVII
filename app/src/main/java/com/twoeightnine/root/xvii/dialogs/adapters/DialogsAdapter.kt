@@ -92,9 +92,9 @@ class DialogsAdapter(
                 ivUnreadDotOut.setVisible(!dialog.isRead && dialog.isOut)
                 rlUnreadCount.setVisible(!dialog.isRead && !dialog.isOut && dialog.unreadCount > 0)
 
-                if(dialog.isPinned) {
+                /*if(dialog.isPinned) {
                     rlItemContainer.setBackgroundColor(Munch.color.color(5))
-                }
+                }*/
                 if (dialog.unreadCount != 0) {
                     val unread = if (dialog.unreadCount > 99) {
                         context.getString(R.string.unread100)

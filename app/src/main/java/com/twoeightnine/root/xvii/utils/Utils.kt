@@ -40,6 +40,7 @@ import android.provider.MediaStore
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.DisplayMetrics
 import android.view.View
@@ -59,6 +60,7 @@ import com.twoeightnine.root.xvii.chats.messages.chat.usual.ChatActivity
 import com.twoeightnine.root.xvii.crypto.md5
 import com.twoeightnine.root.xvii.lg.L
 import com.twoeightnine.root.xvii.main.MainActivity
+import com.twoeightnine.root.xvii.uikit.Munch
 import global.msnthrp.xvii.uikit.extensions.SimpleBitmapTarget
 import global.msnthrp.xvii.uikit.extensions.load
 import io.reactivex.Completable
@@ -71,7 +73,7 @@ import java.text.DecimalFormat
 import java.util.regex.Pattern
 
 
-private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\]|#+[a-zA-Z0-9а-яА-ЯёЁ_]{1,})"
+private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\]|#+[a-zA-Z0-9а-яА-ЯёЁ_@]{1,})"
 
 fun isOnline(): Boolean {
     val cm = App.context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -276,17 +278,26 @@ fun wrapMentions(context: Context, text: CharSequence, addClickable: Boolean = f
 
         if(mention.indexOf('#')==0){
             // если тег
+
+            val divider = mention.indexOf('@')
+
+            var tag = mention
+            var screenName = ""
+            if(divider!= -1) {
+                screenName = mention.substring(divider + 1, mention.length)
+                tag = mention.substring(0, divider)
+            }
             ssb.append(text.substring(globalStart, start))
-                .append(mention)
+                .append(tag)
             val tmp = ssb.toString()
             if (addClickable) {
                 ssb.setSpan(object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        MainActivity.launch(context, mention, ownerId)
+                        MainActivity.launch(context, tag, ownerId, screenName)
                     }
-                }, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }, tmp.length - tag.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }else{
-                ssb.setSpan(object : StyleSpan(R.style.NoClickableTag) {}, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                ssb.setSpan(object : ForegroundColorSpan(Munch.color.color) {}, tmp.length - tag.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
         }else{

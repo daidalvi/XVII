@@ -28,7 +28,6 @@
         android:id="@+id/rlItemContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
         android:background="@drawable/selector_rect">
 
         <com.twoeightnine.root.xvii.uikit.XviiAvatar
@@ -101,12 +100,14 @@
 
                 <TextView
                     android:id="@+id/tvBody"
-                    style="@style/OtherText"
+                    style="@style/SecondaryText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:layout_toStartOf="@+id/ivUnreadDotOut"
                     android:layout_toEndOf="@+id/tvYou"
+                    android:textColorHighlight="@android:color/transparent"
+                    android:textColorLink="@color/link_color"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textSize="@dimen/user_info_text_size"

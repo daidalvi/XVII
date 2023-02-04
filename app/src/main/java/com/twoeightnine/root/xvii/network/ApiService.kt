@@ -402,6 +402,7 @@ interface ApiService {
     @GET("wall.search?extended=1")
     fun wallSearch(
             @Query("owner_id") ownerId: Int,
+            @Query("domain") domain: String,
             @Query("query") q: String,
             @Query("count") count: Int,
             @Query("offset") offset: Int,

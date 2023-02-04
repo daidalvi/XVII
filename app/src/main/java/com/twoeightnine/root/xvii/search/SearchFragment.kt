@@ -54,8 +54,6 @@ class SearchFragment : BaseFragment() {
     var lastAdded: Int = 0
 
     private val searchType by lazy {
-        val zz = arguments?.getString(MainActivity.SEARCH_TYPE)
-        val zz2 = arguments?.getString(MainActivity.SEARCH_TEXT)
         SEARCH_TYPE.values()[arguments?.getInt(MainActivity.SEARCH_TYPE)?: SEARCH_TYPE.CHAT.ordinal]
     }
     private val searchString by lazy {
@@ -64,6 +62,10 @@ class SearchFragment : BaseFragment() {
 
     private val searchOwnerId by lazy {
         arguments?.getInt(MainActivity.SEARCH_OWNER_ID)?: 0
+    }
+
+    private val searchScreenName by lazy {
+        arguments?.getString(MainActivity.SEARCH_SCREEN_NAME)?: ""
     }
 
     private val adapter by lazy {
@@ -80,6 +82,7 @@ class SearchFragment : BaseFragment() {
 
         viewModel.setFrom(searchType)
         viewModel.setOwnerId(searchOwnerId)
+        viewModel.searchScreenName(searchScreenName)
         etSearch.subscribeSearch(true, viewModel::search)
         searchString?.let {
             etSearch.setText(it.toString())

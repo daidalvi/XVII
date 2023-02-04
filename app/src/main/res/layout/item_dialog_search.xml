@@ -19,6 +19,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -50,7 +51,7 @@
 
         <TextView
             android:id="@+id/tvTitle"
-            style="@style/MainMediumText"
+            style="@style/SecondaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -70,9 +71,13 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
             android:layout_toEndOf="@+id/civPhoto"
+            android:textColorHighlight="@android:color/transparent"
+            android:textColorLink="@color/link_color"
+            android:ellipsize="end"
             android:singleLine="true"
             android:text=""
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            tools:text="message"/>
 
         <ImageView
             android:id="@+id/ivOnlineDot"
