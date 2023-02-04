@@ -87,10 +87,6 @@ class WallAdapter(
         holder.bind(items[position])
     }
 
-    private fun getMessageBody(context: Context, text: String, ownerId:Int): String {
-        return wrapMentions(context, text, true, ownerId).toString()
-    }
-
     inner class WallViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(post: WallPost, level:Int=0) {

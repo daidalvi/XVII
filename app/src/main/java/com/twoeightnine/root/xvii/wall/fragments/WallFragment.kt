@@ -113,8 +113,7 @@ class WallFragment : BaseFragment() {
     }
 
     private fun onClick(wall: WallPost) {
-        val pid = "${wall.ownerId}_${wall.id}"
-        context.startFragment<WallPostFragment>(WallPostFragment.createArgs(pid))
+        context.startFragment<WallPostFragment>(WallPostFragment.createArgs(wall.stringId))
     }
 
     private fun onLongClick(wall: WallPost) {
