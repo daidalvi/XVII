@@ -33,7 +33,7 @@ import androidx.lifecycle.Observer
 import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.background.longpoll.LongPollStorage
-import com.twoeightnine.root.xvii.background.test.ZeForegroundService
+//import com.twoeightnine.root.xvii.background.test.ZeForegroundService
 import com.twoeightnine.root.xvii.base.BaseActivity
 import com.twoeightnine.root.xvii.main.MainActivity
 import com.twoeightnine.root.xvii.managers.Prefs
