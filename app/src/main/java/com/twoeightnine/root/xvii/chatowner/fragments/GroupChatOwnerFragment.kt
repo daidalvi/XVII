@@ -24,10 +24,14 @@ import android.util.DisplayMetrics
 import android.view.View
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.model.Group
+import com.twoeightnine.root.xvii.uikit.Munch
+import com.twoeightnine.root.xvii.uikit.paint
 import com.twoeightnine.root.xvii.utils.BrowsingUtils
 import com.twoeightnine.root.xvii.wall.fragments.WallFragment
 import global.msnthrp.xvii.uikit.extensions.setVisible
 import kotlinx.android.synthetic.main.fragment_chat_owner_group.*
+import kotlinx.android.synthetic.main.item_chat_owner_field.view.*
+import kotlinx.android.synthetic.main.item_dialog.view.*
 
 
 class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
@@ -64,6 +68,24 @@ class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
         addValue(R.drawable.ic_vk, group.screenName, ::onClick)
         addValue(R.drawable.ic_quotation, group.status)
         addValue(R.drawable.ic_sheet, group.description)
+
+        menuContainer.setBackgroundColor(Munch.color.color(15))
+        ivPhotos.paint(Munch.color.color)
+        ivBoards.paint(Munch.color.color)
+        ivArticles.paint(Munch.color.color)
+        ivLinks.paint(Munch.color.color)
+        ivPhotos.setOnClickListener {
+            context?.let{ BrowsingUtils.openUrl(it, URL_VK+"albums-"+chatOwner.id)}
+        }
+        ivBoards.setOnClickListener {
+            context?.let{ BrowsingUtils.openUrl(it, URL_VK+"board"+chatOwner.id)}
+        }
+        ivArticles.setOnClickListener {
+            context?.let{ BrowsingUtils.openUrl(it, URL_VK+"@"+chatOwner.screenName)}
+        }
+        ivLinks.setOnClickListener {
+            context?.let{ BrowsingUtils.openUrl(it, URL_VK+chatOwner.screenName+"?act=links")}
+        }
 
         if(group.site.isNotEmpty()){
             fabGotoSite.setVisible(true)
@@ -105,7 +127,7 @@ class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
 
     companion object {
 
-        private const val URL_VK = "https://vk.com/"
+        private const val URL_VK = "https://m.vk.com/"
 
         fun newInstance(peerId: Int): GroupChatOwnerFragment {
             val fragment = GroupChatOwnerFragment()

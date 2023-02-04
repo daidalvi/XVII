@@ -85,6 +85,10 @@ open class DialogsFragment : BaseFragment() {
             BrowsingUtils.openUrl(context, BOOKMARKS_URL, ignoreNative = true)
 
         }
+        ivToolbarLogo.setOnLongClickListener{
+            BrowsingUtils.openUrl(context, CHAT_URL, ignoreNative = true)
+            true
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -207,8 +211,8 @@ open class DialogsFragment : BaseFragment() {
     }
 
     companion object {
-        const val BOOKMARKS_URL = "https://m.vk.com/bookmarks"
-
+        const val BOOKMARKS_URL = "https://m.vk.com/bookmarks?type=group"
+        const val CHAT_URL = "https://m.vk.com/im"
 
         fun newInstance() = DialogsFragment()
     }
