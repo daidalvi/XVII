@@ -27,22 +27,26 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
+import android.widget.RelativeLayout
 import androidx.annotation.NonNull
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import com.makeramen.roundedimageview.RoundedImageView
 import com.twoeightnine.root.xvii.R
 import com.twoeightnine.root.xvii.chats.attachments.AttachmentsInflater
+import com.twoeightnine.root.xvii.databinding.ContainerVideoBinding
 import com.twoeightnine.root.xvii.extensions.getInitials
 import com.twoeightnine.root.xvii.extensions.load
 import com.twoeightnine.root.xvii.managers.Prefs
 import com.twoeightnine.root.xvii.model.WallPost
 import com.twoeightnine.root.xvii.model.attachments.Attachment
 import com.twoeightnine.root.xvii.model.attachments.Photo
+import com.twoeightnine.root.xvii.model.attachments.Video
 import com.twoeightnine.root.xvii.model.attachments.getPhotos
 import com.twoeightnine.root.xvii.utils.*
 import com.twoeightnine.root.xvii.wall.fragments.WallFragment
 import global.msnthrp.xvii.uikit.base.adapters.BaseAdapter
+import global.msnthrp.xvii.uikit.extensions.hide
 import global.msnthrp.xvii.uikit.extensions.lowerIf
 import global.msnthrp.xvii.uikit.extensions.setVisible
 import global.msnthrp.xvii.uikit.utils.DisplayUtils
@@ -65,7 +69,10 @@ class WallAdapter(
 
     private val defaultRadiusMin = SizeUtils.pxFromDp(context, 10)
 
-    private val picturesSpacing = SizeUtils.pxFromDp(context, 4)
+    private val picturesSpacing = SizeUtils.pxFromDp(context, 5)
+
+    private val videoWidth = resources.getDimensionPixelSize(R.dimen.chat_message_video_width)
+    private val videoHeight = resources.getDimensionPixelSize(R.dimen.chat_message_video_height)
 
     private val wpCallback:WallFragment.WallPostCallback = wallPostCallback(context)
 
@@ -132,7 +139,8 @@ class WallAdapter(
                     post.attachments?.let{
                         val attList = ArrayList<Attachment>()
                         for(attachment in it){
-                            if(attachment.type != Attachment.TYPE_PHOTO){
+                            if(attachment.type != Attachment.TYPE_PHOTO &&
+                                attachment.type != Attachment.TYPE_VIDEO){
                                 attList.add(attachment)
                             }
                         }
@@ -178,10 +186,37 @@ class WallAdapter(
                             )
                             k+=1
                         }
+                    Attachment.TYPE_VIDEO -> {
+                        val view = attachment.video?.let(::createVideo)
+                        itemView.ivVideoAttach.addView(view)
+                    }
                     else -> null
                 }
             }
         }
+
+        private fun createVideo(video: Video, level: Int = 0): View =
+            ContainerVideoBinding.inflate(inflater).run {
+                ivVideo.load(video.maxPhoto) {
+                    override(videoWidth, videoHeight)
+                    centerCrop()
+                }
+                if (video.duration != 0) {
+                    tvDuration.text = secToTime(video.duration)
+                } else {
+                    rlDuration.hide()
+                }
+
+                val width = DisplayUtils.screenWidth /*getViewWidth(photoMargin, level)*/
+                val ratio = videoWidth.toFloat() / videoHeight
+                val height = (width / ratio).toInt()
+                ivVideo.layoutParams = RelativeLayout.LayoutParams(width, height)
+                   // .withMargin(getAppliedMargin(photoMargin))
+                root.setOnClickListener {
+                    wpCallback.onVideoClicked(video)
+                }
+                root
+            }
 
         private fun createPhotoForWallPost(photo: Photo, photos: List<Photo>, num:Int): View {
             val count = photos.count()
@@ -214,53 +249,56 @@ class WallAdapter(
             val param = GridLayout.LayoutParams()
 
 
-            var width = DisplayUtils.screenWidth / columns
-
-            val scale = width * 1.0f / photoSize.width
+            val wCalc = DisplayUtils.screenWidth / columns
+            val scale = wCalc * 1.0f / photoSize.width
             val hCalc = (photoSize.height * scale).toInt()
 
-            if (columns> 1)
-                width = width - picturesSpacing
+            var width = when {
+                columns == 1 -> wCalc
+                columns == 2 -> wCalc - picturesSpacing / 2
+                else -> wCalc - picturesSpacing * 2/3
+            }
 
             //square
-            var ivHeight = width
+            var height = width
 
+            var leftMargin = picturesSpacing
             if(num == 0){
                 when{
                     count == 1 -> {
-                        ivHeight = hCalc
+                        height = hCalc
                         roundedImageView.cornerRadius = defaultRadius.toFloat()
                     }
                     count == 3 ->{
                         // as is in 2 cells
                         roundedImageView.cornerRadius = defaultRadiusMin.toFloat()
                         param.columnSpec = GridLayout.spec(0, 2)
-                        width=(width + picturesSpacing) * 2
-                        ivHeight = hCalc * 2
+                        width= wCalc * 2
+                        height = hCalc * 2
                     }
                     count > 4 && count % 3 == 1 ->{
                         // as is in 3 cells
                         roundedImageView.cornerRadius = defaultRadiusMin.toFloat()
                         param.columnSpec = GridLayout.spec(0, 3)
-                        width=(width + picturesSpacing) * 3
-                        ivHeight = hCalc * 3
+                        width= wCalc * 3
+                        height = hCalc * 3
                     }
                     count > 4 && count % 3 == 2 ->{
-                        if(hCalc>(width + picturesSpacing)){
+                        if(hCalc > wCalc){
                             // vertical
                             param.rowSpec = GridLayout.spec(0, 2)    // First cell in first row use rowSpan 2.
-                            ivHeight = (ivHeight+ picturesSpacing) * 2
+                            height = height * 2 + picturesSpacing
                         }else{
                             // horizontal
                             param.columnSpec = GridLayout.spec(0, 2) // First cell in first column use columnSpan 2.
-                            width=width * 2 + picturesSpacing
+                            width = width * 2 + picturesSpacing
                         }
                     }
 
                 }
             }
 
-            param.height = ivHeight
+            param.height = height
             param.width = width
             param.rightMargin = picturesSpacing
             param.topMargin = picturesSpacing
@@ -271,7 +309,7 @@ class WallAdapter(
             itemView.ivPhotoAttach.addView(roundedImageView)
 
             roundedImageView.load(photoSize.url) {
-                override(width, ivHeight)
+                override(width, height)
                 centerCrop()
             }
             return roundedImageView

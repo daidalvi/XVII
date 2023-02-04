@@ -26,6 +26,7 @@ import com.twoeightnine.root.xvii.background.longpoll.receivers.KeyExchangeHandl
 import com.twoeightnine.root.xvii.background.longpoll.receivers.MarkAsReadBroadcastReceiver
 import com.twoeightnine.root.xvii.background.longpoll.services.NotificationService
 import com.twoeightnine.root.xvii.background.messaging.MessageDestructionService
+import com.twoeightnine.root.xvii.background.test.ZeForegroundService
 import com.twoeightnine.root.xvii.chatowner.ChatOwnerViewModel
 import com.twoeightnine.root.xvii.chats.attachments.audios.AudioAttachmentsFragment
 import com.twoeightnine.root.xvii.chats.attachments.docs.DocAttachFragment
@@ -111,6 +112,7 @@ interface AppComponent {
 
     //other
     fun inject(notificationService: NotificationService)
+    //fun inject(zeForegroundService: ZeForegroundService)
     fun inject(destructionService: MessageDestructionService)
     fun inject(sendMessageWorker: SendMessageWorker)
     fun inject(longPollCore: LongPollCore)

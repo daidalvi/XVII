@@ -92,10 +92,18 @@
         </GridLayout>
 
         <LinearLayout
-            android:id="@+id/ivAttach"
+            android:id="@+id/ivVideoAttach"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ivPhotoAttach"
+            android:orientation="vertical">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ivAttach"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivVideoAttach"
             android:orientation="vertical">
         </LinearLayout>
 

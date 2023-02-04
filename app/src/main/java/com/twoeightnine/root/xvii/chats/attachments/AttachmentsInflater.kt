@@ -348,9 +348,13 @@ class AttachmentsInflater(
 
     private fun createLink(link: Link): View =
             ContainerLinkBinding.inflate(inflater).run {
-                ivPhoto.load(link.photo?.getSmallPhoto()?.url)
-                tvTitle.text = link.title
-                tvCaption.text = link.caption
+                if(link.photo?.getSmallPhoto()?.url?.isNotEmpty() == true){
+                    ivPhoto.load(link.photo?.getSmallPhoto()?.url)
+                }else{
+                    ivPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_worldwide))
+                }
+                tvTitle.text = if(link.title?.isNotEmpty() == true) link.title else context.getString(R.string.link)
+                tvCaption.text = if(link.caption?.isNotEmpty() == true) link.caption else link.url
                 root.setOnClickListener {
                     callback.onLinkClicked(link)
                 }
@@ -507,7 +511,7 @@ class AttachmentsInflater(
 
         override fun onLinkClicked(link: Link) {
             val fullUrl = link.url
-            val shortUrl = link.caption
+            val shortUrl = if(link.caption?.isNotEmpty() == true)link.caption else fullUrl
             val message = context.getString(R.string.attachment_open_link_prompt, shortUrl)
             showConfirm(context, message) { yes ->
                 if (yes) {
