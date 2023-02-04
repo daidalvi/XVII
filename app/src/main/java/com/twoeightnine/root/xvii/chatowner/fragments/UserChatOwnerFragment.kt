@@ -139,7 +139,7 @@ class UserChatOwnerFragment : BaseChatOwnerFragment<User>() {
             copy(user.site, R.string.site)
         }
 
-        addValue(R.drawable.ic_vk, user.domain, null) {
+        addValue(R.drawable.ic_vk, user.domain, ::onUserLinkClick) {
             copy(user.link, R.string.link)
         }
         addValue(R.drawable.ic_inst, user.instagram, { goTo(user.linkInst) }) {
@@ -159,6 +159,10 @@ class UserChatOwnerFragment : BaseChatOwnerFragment<User>() {
         }
     }
 
+    private fun onUserLinkClick(s: String) {
+        context?.let{ BrowsingUtils.openUrl(it, URL_VK +s)}
+    }
+
     private fun onBlockedChanged(data: Wrapper<Boolean>) {
         val isBlocked = data.data
         if (isBlocked != null) {
@@ -170,6 +174,8 @@ class UserChatOwnerFragment : BaseChatOwnerFragment<User>() {
     }
 
     companion object {
+
+        private const val URL_VK = "https://vk.com/"
 
         fun newInstance(peerId: Int): UserChatOwnerFragment {
             val fragment = UserChatOwnerFragment()

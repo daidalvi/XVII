@@ -43,10 +43,7 @@ import com.twoeightnine.root.xvii.network.response.WallPostResponse
 import com.twoeightnine.root.xvii.report.ReportFragment
 import com.twoeightnine.root.xvii.uikit.XviiAvatar
 import com.twoeightnine.root.xvii.utils.*
-import global.msnthrp.xvii.uikit.extensions.applyBottomInsetPadding
-import global.msnthrp.xvii.uikit.extensions.hide
-import global.msnthrp.xvii.uikit.extensions.lowerIf
-import global.msnthrp.xvii.uikit.extensions.show
+import global.msnthrp.xvii.uikit.extensions.*
 import kotlinx.android.synthetic.main.content_wall_post.view.*
 import kotlinx.android.synthetic.main.content_wall_post.view.civAvatar
 import kotlinx.android.synthetic.main.fragment_wall_post.*
@@ -152,7 +149,7 @@ class WallPostFragment : BaseFragment() {
             }
             holder.tvPost.movementMethod = LinkMovementMethod.getInstance()
         }else{
-            holder.tvPost.text = post.text
+            holder.tvPost.setVisible(false)
         }
 
         attachmentsInflater.createViewsFor(post)

@@ -43,6 +43,7 @@ import global.msnthrp.xvii.uikit.extensions.applyBottomInsetPadding
 import global.msnthrp.xvii.uikit.extensions.hide
 import global.msnthrp.xvii.uikit.extensions.show
 import kotlinx.android.synthetic.main.fragment_groups.*
+import kotlinx.android.synthetic.main.fragment_wall.*
 import javax.inject.Inject
 
 class GroupsFragment : BaseFragment() {
@@ -61,12 +62,12 @@ class GroupsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         App.appComponent?.inject(this)
         viewModel = ViewModelProviders.of(this, viewModelFactory)[GroupsViewModel::class.java]
-
         adapter.startLoading()
 
         progressBar.show()
         rvGroups.layoutManager = LinearLayoutManager(context)
         rvGroups.adapter = adapter
+        rvGroups.setItemViewCacheSize(0)
         rvGroups.addOnScrollListener(AppBarLifter(xviiToolbar))
 
         swipeRefresh.setOnRefreshListener {

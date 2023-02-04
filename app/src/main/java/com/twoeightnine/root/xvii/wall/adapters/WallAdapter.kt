@@ -44,6 +44,7 @@ import com.twoeightnine.root.xvii.utils.*
 import com.twoeightnine.root.xvii.wall.fragments.WallFragment
 import global.msnthrp.xvii.uikit.base.adapters.BaseAdapter
 import global.msnthrp.xvii.uikit.extensions.lowerIf
+import global.msnthrp.xvii.uikit.extensions.setVisible
 import global.msnthrp.xvii.uikit.utils.DisplayUtils
 import global.msnthrp.xvii.uikit.utils.SizeUtils
 import kotlinx.android.synthetic.main.item_wall.view.*
@@ -120,6 +121,8 @@ class WallAdapter(
                             else -> preparedText
                         }
                         tvText.movementMethod = LinkMovementMethod.getInstance()
+                    }else{
+                        tvText.setVisible(false)
                     }
                 }
 
