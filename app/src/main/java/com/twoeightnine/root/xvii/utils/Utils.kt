@@ -29,7 +29,6 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.BatteryManager
@@ -40,7 +39,7 @@ import android.provider.MediaStore
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
+import android.text.style.ForegroundColorSpan
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -69,9 +68,10 @@ import okhttp3.ResponseBody
 import java.io.*
 import java.text.DecimalFormat
 import java.util.regex.Pattern
+import com.twoeightnine.root.xvii.uikit.Munch
 
 
-private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\]|#+[a-zA-Z0-9а-яА-Я(_)]{1,})"
+private const val REGEX_MENTION = "(\\[id\\d{1,9}\\|[^\\]]+\\]|#+[a-zA-Z0-9а-яА-ЯёЁ_@]{1,})"
 
 fun isOnline(): Boolean {
     val cm = App.context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -286,7 +286,7 @@ fun wrapMentions(context: Context, text: CharSequence, addClickable: Boolean = f
                     }
                 }, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }else{
-                ssb.setSpan(object : StyleSpan(Typeface.BOLD) {}, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                ssb.setSpan(object : ForegroundColorSpan(Munch.color.color) {}, tmp.length - mention.length, tmp.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
 
         }else{
