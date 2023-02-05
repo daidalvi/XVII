@@ -39,6 +39,9 @@
         android:id="@+id/menu_attach_logs"
         android:title="@string/attach_logs"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/menu_save_dialog"
+        android:title="@string/save_dialog"
+        app:showAsAction="never" />
 
 </menu>

@@ -566,5 +566,7 @@
     <string name="edit_profile">редактировать профиль</string>
     <string name="selected_groups">группы для чтения</string>
     <string name="group_list">группы</string>
+    <string name="save_dialog">сохранить диалог</string>
+    <string name="file_saved_to">файл сохранён в директорию: %s</string>
 
 </resources>

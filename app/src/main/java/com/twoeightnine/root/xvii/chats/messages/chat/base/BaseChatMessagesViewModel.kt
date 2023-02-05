@@ -535,7 +535,7 @@ abstract class BaseChatMessagesViewModel(api: ApiService) : BaseMessagesViewMode
         interactionsLiveData.value = Wrapper(Interaction(Interaction.Type.REMOVE, pos))
     }
 
-    private fun convert(resp: BaseResponse<MessagesHistoryResponse>, notify: Boolean = true): BaseResponse<ArrayList<Message>> {
+    protected fun convert(resp: BaseResponse<MessagesHistoryResponse>, notify: Boolean = true): BaseResponse<ArrayList<Message>> {
         val messages = arrayListOf<Message>()
         val response = resp.response
         response?.items?.forEach {
@@ -683,6 +683,7 @@ abstract class BaseChatMessagesViewModel(api: ApiService) : BaseMessagesViewMode
         )
 
         const val COUNT = 50
+        const val COUNT_LOAD_TO_SAVE = 100
 
         const val ACTIVITY_TYPING = "typing"
         const val ACTIVITY_VOICE = "audiomessage"

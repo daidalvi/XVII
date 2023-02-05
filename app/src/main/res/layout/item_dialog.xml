@@ -24,6 +24,23 @@
     android:layout_height="wrap_content"
     tools:ignore="SpUsage">
 
+    <LinearLayout
+        android:id="@+id/rlItemContainerWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/tvPinnedDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/popup"
+            android:visibility="gone" />
+
     <RelativeLayout
         android:id="@+id/rlItemContainer"
         android:layout_width="match_parent"
@@ -180,9 +197,10 @@
                 tools:text="1" />
 
         </RelativeLayout>
-
-
     </RelativeLayout>
+
+
+    </LinearLayout>
 
 
 </FrameLayout>

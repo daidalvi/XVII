@@ -19,10 +19,12 @@
 package com.twoeightnine.root.xvii.chats.messages.chat.usual
 
 import android.os.Bundle
+import android.os.Environment
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.twoeightnine.root.xvii.App
 import com.twoeightnine.root.xvii.BuildConfig
 import com.twoeightnine.root.xvii.R
@@ -95,9 +97,25 @@ class ChatMessagesFragment : BaseChatMessagesFragment<ChatMessagesViewModel>() {
                         }
                 true
             }
+            R.id.menu_save_dialog -> {
+                val dir = context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?: context?.cacheDir
+                val file = File(dir, "${title}_${getTime(time(), false,
+                    false, false, DD_MM_YYYY + " " + HH_MM)}.txt")
+                viewModel.loadMessagesToSave(0, arrayListOf<String>()) { messages ->
+                    ReportTool()
+                        .addLogs(messages)
+                        .toFile(file) {
+                            onDocSelected(file.absolutePath)
+                            showToast(context, requireContext().getString(R.string.file_saved_to,
+                                dir.toString()), Toast.LENGTH_LONG)
+                        }
+                }
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 
     companion object {
 

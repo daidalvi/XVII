@@ -611,6 +611,8 @@
     <string name="edit_profile">edit profile</string>
     <string name="selected_groups">groups to read</string>
     <string name="group_list">groups</string>
+    <string name="save_dialog">save dialog</string>
+    <string name="file_saved_to">file saved to location: %s</string>
 
 </resources>
 

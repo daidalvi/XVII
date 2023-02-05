@@ -54,6 +54,8 @@ class DialogsAdapter(
 
     var firstItemPadding = 0
 
+    private var prevPinState = false
+
     override fun createStubLoadItem() = Dialog()
 
     override fun createHolder(parent: ViewGroup, viewType: Int)
@@ -92,9 +94,15 @@ class DialogsAdapter(
                 ivUnreadDotOut.setVisible(!dialog.isRead && dialog.isOut)
                 rlUnreadCount.setVisible(!dialog.isRead && !dialog.isOut && dialog.unreadCount > 0)
 
-                /*if(dialog.isPinned) {
-                    rlItemContainer.setBackgroundColor(Munch.color.color(5))
-                }*/
+                tvPinnedDivider.setVisible(false)
+                if(dialog.isPinned) {
+                    prevPinState = true
+                    //rlItemContainer.setBackgroundColor(Munch.color.color(5))
+                }else if(prevPinState){
+                    tvPinnedDivider.setVisible(true)
+                    prevPinState = false
+                }
+
                 if (dialog.unreadCount != 0) {
                     val unread = if (dialog.unreadCount > 99) {
                         context.getString(R.string.unread100)

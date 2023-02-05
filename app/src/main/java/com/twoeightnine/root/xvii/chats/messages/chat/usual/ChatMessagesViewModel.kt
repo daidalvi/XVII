@@ -21,9 +21,9 @@ package com.twoeightnine.root.xvii.chats.messages.chat.usual
 import com.twoeightnine.root.xvii.chats.messages.chat.base.BaseChatMessagesViewModel
 import com.twoeightnine.root.xvii.chats.tools.ChatStorage
 import com.twoeightnine.root.xvii.model.attachments.Attachment
+import com.twoeightnine.root.xvii.model.messages.Message
 import com.twoeightnine.root.xvii.network.ApiService
-import com.twoeightnine.root.xvii.utils.applySchedulers
-import com.twoeightnine.root.xvii.utils.subscribeSmart
+import com.twoeightnine.root.xvii.utils.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -36,34 +36,34 @@ class ChatMessagesViewModel(
 
     override fun attachPhoto(path: String, onAttached: (String, Attachment) -> Unit) {
         api.getPhotoUploadServer()
-                .subscribeSmart({ uploadServer ->
-                    val file = File(path)
-                    val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                    val body = MultipartBody.Part.createFormData("photo", file.name, requestFile)
-                    api.uploadPhoto(uploadServer.uploadUrl ?: "", body)
-                            .compose(applySchedulers())
-                            .subscribe({ uploaded ->
-                                api.saveMessagePhoto(
-                                        uploaded.photo ?: "",
-                                        uploaded.hash ?: "",
-                                        uploaded.server
-                                )
-                                        .subscribeSmart({
-                                            onAttached(path, Attachment(it[0]))
-                                        }, { error ->
-                                            onErrorOccurred(error)
-                                            lw("save uploaded photo error: $error")
-                                        })
+            .subscribeSmart({ uploadServer ->
+                val file = File(path)
+                val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                val body = MultipartBody.Part.createFormData("photo", file.name, requestFile)
+                api.uploadPhoto(uploadServer.uploadUrl ?: "", body)
+                    .compose(applySchedulers())
+                    .subscribe({ uploaded ->
+                        api.saveMessagePhoto(
+                            uploaded.photo ?: "",
+                            uploaded.hash ?: "",
+                            uploaded.server
+                        )
+                            .subscribeSmart({
+                                onAttached(path, Attachment(it[0]))
                             }, { error ->
-                                val message = error.message ?: "null"
-                                lw("uploading photo error: $message")
-                                onErrorOccurred(message)
+                                onErrorOccurred(error)
+                                lw("save uploaded photo error: $error")
                             })
+                    }, { error ->
+                        val message = error.message ?: "null"
+                        lw("uploading photo error: $message")
+                        onErrorOccurred(message)
+                    })
 
-                }, { error ->
-                    onErrorOccurred(error)
-                    lw("getting ploading server error: $error")
-                })
+            }, { error ->
+                onErrorOccurred(error)
+                lw("getting ploading server error: $error")
+            })
     }
 
     override fun prepareTextOut(text: String?) = text ?: ""
@@ -74,5 +74,30 @@ class ChatMessagesViewModel(
 
     fun invalidateMessageText(text: String) {
         chatStorage.setMessageText(peerId, text)
+    }
+
+    fun loadMessagesToSave(
+        offset: Int,
+        allMessages: ArrayList<String>,
+        onFinish: (ArrayList<String>) -> Unit
+    ) {
+        api.getMessages(peerId, COUNT_LOAD_TO_SAVE, offset)
+            .map { convert(it) }
+            .subscribeSmart({ messages ->
+                if (messages.isNotEmpty()) {
+                    messages.forEach { msg ->
+                        if(msg.text.isNotEmpty()) {
+                            val msgStr = "★" + msg.name + "★ (" + getTime(
+                                msg.date, false,
+                                false, false, DD_MM_YYYY + " " + HH_MM
+                            ) + ")\n" + msg.text + "\n"
+                            allMessages.add(msgStr)
+                        }
+                    }
+                    loadMessagesToSave(offset + COUNT_LOAD_TO_SAVE, allMessages, onFinish)
+                } else {
+                    onFinish(allMessages)
+                }
+            }, ::onErrorOccurred)
     }
 }

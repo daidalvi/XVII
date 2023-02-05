@@ -18,20 +18,23 @@
 
 package com.twoeightnine.root.xvii.chatowner.fragments
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import com.twoeightnine.root.xvii.R
+import com.twoeightnine.root.xvii.base.FragmentPlacementActivity.Companion.startFragment
+import com.twoeightnine.root.xvii.main.MainActivity.Companion.SEARCH_OWNER_ID
+import com.twoeightnine.root.xvii.main.MainActivity.Companion.SEARCH_TYPE
 import com.twoeightnine.root.xvii.model.Group
+import com.twoeightnine.root.xvii.search.SEARCH_TYPE.GROUP
+import com.twoeightnine.root.xvii.search.SearchFragment
 import com.twoeightnine.root.xvii.uikit.Munch
 import com.twoeightnine.root.xvii.uikit.paint
 import com.twoeightnine.root.xvii.utils.BrowsingUtils
 import com.twoeightnine.root.xvii.wall.fragments.WallFragment
+import global.msnthrp.xvii.uikit.extensions.applyTopInsetMargin
 import global.msnthrp.xvii.uikit.extensions.setVisible
 import kotlinx.android.synthetic.main.fragment_chat_owner_group.*
-import kotlinx.android.synthetic.main.item_chat_owner_field.view.*
-import kotlinx.android.synthetic.main.item_dialog.view.*
 
 
 class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
@@ -59,6 +62,9 @@ class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
                 it.requestLayout()
             }
         }
+
+        ivSearchGroup.paint(Munch.color.color)
+        ivSearchGroup.applyTopInsetMargin()
     }
 
 
@@ -95,6 +101,14 @@ class GroupChatOwnerFragment : BaseChatOwnerFragment<Group>() {
                     BrowsingUtils.openUrl(context, group.site, true)
                 }
             }
+        }
+
+        ivSearchGroup.setOnClickListener {
+            var arguments = Bundle().apply {
+                putInt(SEARCH_TYPE, GROUP.ordinal)
+                putInt(SEARCH_OWNER_ID, chatOwner.getPeerId())
+            }
+            startFragment<SearchFragment>(arguments)
         }
     }
 

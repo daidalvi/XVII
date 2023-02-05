@@ -29,6 +29,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <ImageView
+        android:id="@+id/ivSearchGroup"
+        android:elevation="10dp"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_search"
+        android:layout_width="wrap_content"
+        android:padding="16dp"
+        android:layout_height="wrap_content" />
+
     <View
         android:id="@+id/vShadow"
         android:layout_width="match_parent"
